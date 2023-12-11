@@ -36,3 +36,24 @@
     transform: rotate(360deg);
   }
 }
+
+
+.input-field::placeholder {
+  color: #FFFFFF;
+  font-family: 'Raleway', sans-serif;
+}
+
+.input-getProperty::placeholder {
+  color: #FFFFFF;
+  font-family: 'Raleway', sans-serif;
+  padding-left: 25%;
+}
+
+#SearchInput::placeholder {
+  margin-left: 20px !important;
+  /* Add other styles as needed */
+}
+
+#SearchInput::placeholder {
+  color: #8E8E8E /* Replace with your desired color code or name */
+}

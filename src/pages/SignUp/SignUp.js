@@ -7,6 +7,9 @@ import Address_Icon from "../../assests/address.svg";
 import Name_Icon from "../../assests/email_id_icon.svg";
 import Phone_Icon from "../../assests/phone_icon.svg";
 import EmailIcon from "../../assests/email_icon.svg";
+import { useFormik } from "formik";
+import * as Yup from 'yup';
+import axios from "axios";
 
 const btnStyle = {
   width: "390px",
@@ -62,13 +65,53 @@ const forgetStyle = {
 };
 
 function SignUp() {
-    const navigate =useNavigate()
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit =(()=>{
-    navigate("/getProperty")
-  })
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      lastName: "",
+      address: "",
+      phoneNumber: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required('Required'),
+      lastName: Yup.string().required('Required'),
+      address: Yup.string().required('Required'),
+      phoneNumber: Yup.string()
+        .required('Required')
+        .matches(/^\d{11}$/, 'Must be 11 digits'),
+      email: Yup.string().email('Invalid email address').required('Required'),
+      password: Yup.string().required('Required'),
+      confirmPassword: Yup.string()
+        .required('Required')
+        .oneOf([Yup.ref('password'), null], 'Passwords must match'),
+    }),
+    onSubmit: async (values) => {
+      try {
+        // Make API request using Axios
+        const response = await axios.post(
+          "http://localhost:8000/commercialAdmin/signup",
+          values
+        );
+
+        // Handle the response as needed
+        console.log("API Response:", response.data);
+        alert("sign success");
+        // navigate("/getProperty");
+        // Add any additional logic or state updates after a successful form submission
+      } catch (error) {
+        // Handle API request errors
+        console.error("API Error:", error.message);
+        // You can update state or show an error message to the user
+      }
+    },
+  });
 
   return (
     <div className="container-fluid ">
@@ -76,12 +119,13 @@ function SignUp() {
         <div className="col-6 ">
           <div className="d-grid align-items-center justify-content-center h-100">
             <img src={DoorMan_Img} alt="" />
-            
+
             {/* <p className="text-center" style={{ color: "#2A3649" }}>
-          
+           name: "",
+      lastName: "",
+      address: 
           </p> */}
           </div>
-        
         </div>
 
         <div
@@ -92,20 +136,22 @@ function SignUp() {
             className=" align-items-center justify-content-center h-100"
             style={{ padding: "20%" }}
           >
-            <form>
+            <form onSubmit={formik.handleSubmit}>
               {/* 1 */}
               <div className="d-flex">
                 <img src={Name_Icon} alt="User Icon" style={{}} />
                 <input
                   type="text"
-                  id="input-field"
+                  id="name"
                   placeholder="Name"
                   style={inputFieldStyle}
                   autoComplete="off"
-                  value={email} // Bind email state to the input value
-                  onChange={(e) => setEmail(e.target.value)} // Update email state on input change
+                  {...formik.getFieldProps("name")}
                 />
               </div>
+              {formik.touched.name && formik.errors.name ? (
+                <div style={{ color: "red" }}>{formik.errors.name}</div>
+              ) : null}
               <hr style={hrStyle}></hr>
               {/* 2 */}
               <div className="d-flex mt-3 ">
@@ -113,103 +159,116 @@ function SignUp() {
                 <input
                   type="text"
                   placeholder="Last Name"
-                  id="input-field"
+                  id="lastName"
                   style={inputFieldStyle}
                   autoComplete="off"
-                  value={password} // Bind email state to the input value
-                  onChange={(e) => setPassword(e.target.value)}
+                  {...formik.getFieldProps("lastName")}
                 />
               </div>
+              {formik.touched.lastName && formik.errors.lastName ? (
+                <div style={{ color: "red" }}>{formik.errors.lastName}</div>
+              ) : null}
               <hr style={hrStyle}></hr>
               {/* 3 */}
-
               <div className="d-flex mt-3">
                 <img src={Address_Icon} alt="User Icon" style={{}} />
                 <input
                   type="text"
-                  id="input-field"
+                  id="address"
                   placeholder="Address"
                   style={inputFieldStyle}
                   autoComplete="off"
-                  value={email} // Bind email state to the input value
-                  onChange={(e) => setEmail(e.target.value)} // Update email state on input change
+                  {...formik.getFieldProps("address")}
                 />
               </div>
+              {formik.touched.address && formik.errors.address ? (
+                <div style={{ color: "red" }}>{formik.errors.address}</div>
+              ) : null}
               <hr style={hrStyle}></hr>
               {/* 4 */}
+              {/* Phone Number */}
               <div className="d-flex mt-3">
                 <img src={Phone_Icon} alt="User Icon" style={{}} />
                 <input
                   type="text"
-                  className="input-field"
-                  placeholder="Phone number "
+                  id="phoneNumber"
+                  placeholder="Phone number"
                   style={inputFieldStyle}
                   autoComplete="off"
-                  value={email} // Bind email state to the input value
-                  onChange={(e) => setEmail(e.target.value)} // Update email state on input change
+                  {...formik.getFieldProps("phoneNumber")}
                 />
               </div>
+              {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
+                <div style={{ color: "red" }}>{formik.errors.phoneNumber}</div>
+              ) : null}
               <hr style={hrStyle}></hr>
               {/* 5 */}
+              {/* Email */}
               <div className="d-flex mt-3">
                 <img src={EmailIcon} alt="User Icon" style={{}} />
                 <input
                   type="text"
-                  className="input-field"
+                  id="email"
                   placeholder="Email"
                   style={inputFieldStyle}
                   autoComplete="off"
-                  value={email} // Bind email state to the input value
-                  onChange={(e) => setEmail(e.target.value)} // Update email state on input change
+                  {...formik.getFieldProps("email")}
                 />
               </div>
+              {formik.touched.email && formik.errors.email ? (
+                <div style={{ color: "red" }}>{formik.errors.email}</div>
+              ) : null}
               <hr style={hrStyle}></hr>
               {/* 6 */}
+              {/* Password */}
               <div className="d-flex mt-3">
                 <img src={Pass_Icon} alt="User Icon" style={{}} />
                 <input
                   type="password"
+                  id="password"
                   placeholder="Password"
-                  className="input-field"
                   style={inputFieldStyle}
                   autoComplete="off"
-                  value={email} // Bind email state to the input value
-                  onChange={(e) => setEmail(e.target.value)} // Update email state on input change
+                  {...formik.getFieldProps("password")}
                 />
               </div>
+              {formik.touched.password && formik.errors.password ? (
+                <div style={{ color: "red" }}>{formik.errors.password}</div>
+              ) : null}
               <hr style={hrStyle}></hr>
               {/* 7 */}
+              {/* Confirm Password */}
               <div className="d-flex mt-3">
                 <img src={Pass_Icon} alt="User Icon" style={{}} />
                 <input
                   type="password"
+                  id="confirmPassword"
                   placeholder="Confirm Password"
-                  className="input-field"
                   style={inputFieldStyle}
                   autoComplete="off"
-                  value={email} // Bind email state to the input value
-                  onChange={(e) => setEmail(e.target.value)} // Update email state on input change
+                  {...formik.getFieldProps("confirmPassword")}
                 />
               </div>
+              {formik.touched.confirmPassword &&
+              formik.errors.confirmPassword ? (
+                <div style={{ color: "red" }}>
+                  {formik.errors.confirmPassword}
+                </div>
+              ) : null}
               <hr style={hrStyle}></hr>
 
-              <div className="d-grid mt-3">
-                <p className="mt-5" style={forgetStyle}>
-                  Forget Password?
-                </p>
-              </div>
-
+              {/* Submit Button */}
               <button
                 style={btnStyle}
-                type="button"
+                type="submit"
                 className="btn btn-primary mt-5"
-                onClick={handleSubmit}
               >
                 Create Account
               </button>
 
-              <div className=" mt-5" style={{ color: "white" }}>
-                Already have an account?
+              {/* Additional Info */}
+              <div className="mt-5" style={{ color: "white" }}>
+                Already have an account?{" "}
                 <Link
                   to="/login"
                   style={{ textDecoration: "none", color: "white" }}

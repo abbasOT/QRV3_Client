@@ -29,13 +29,13 @@ function GetProperty() {
   const handleEnterKeyPress = (e) => {
     if (e.key === "Enter") {
       console.log(PropertyId);
-      handleLoginNavigate();
+      handleNavigate();
     }
   };
 
-  const handleLoginNavigate = () => {
-    // Add your navigation logic here
-    navigate("/property_residents");
+  const handleNavigate = () => {
+
+    navigate(`/property_residents/${PropertyId}`);
   };
 
   return (

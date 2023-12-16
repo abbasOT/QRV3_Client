@@ -1,10 +1,10 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Button, Card, Form } from "react-bootstrap";
+
 import PassIcon from "../../../assests/password_blue_icon.svg";
 import LoadingScreen from "../../../pages/Loader/Loader";
 import EmailIcon from "../../../assests/email_blue_icon.svg";
-
+import { Button, Card, Form ,Modal,} from "react-bootstrap";
 import Address_Icon from "../../../assests/address_blue_icon.svg";
 import Name_Icon from "../../../assests/person_blue_icon.svg";
 import Phone_Icon from "../../../assests/phone_blue_icon.svg";
@@ -15,6 +15,7 @@ import MailIcon from '../../../assests/mail_blue_icon.svg'
 import SuspendIcon from '../../../assests/suspend_icon.svg'
 import ReactivationIcon from '../../../assests/reactivation_icon.svg'
 import DeleteIcon from '../../../assests/delete_icon.svg'
+import AlertModal from "../AlertModal/AlertModal";
 
 const hrStyle = {
   // border: 'none',
@@ -59,6 +60,8 @@ export default function SuspendedUserModal({}) {
   const [password, setPassword] = useState("");
 
   const [isListed, setIsListed] = useState(false);
+  const [showDeleteAlterModal, setDeleteAlertModal] = useState(false);
+
   const [formData, setFormData] = useState({
     fname: "",
     lname: "",
@@ -219,7 +222,22 @@ export default function SuspendedUserModal({}) {
       </div>
 
 
-      
+      <Modal
+        size=""
+        centered
+        className="abc"
+        show={showDeleteAlterModal}
+        style={{ width: "", height: "",border:" #E3982A solid 3px" }}
+        onHide={() => setDeleteAlertModal(false)}
+      >
+       
+        <Modal.Body >
+          <AlertModal message={"Are you sure you want to delete it?"} />
+        </Modal.Body>
+      </Modal>
+
+     
+
     </div>
   );
 }

@@ -6,6 +6,8 @@ import Name_Icon from "../../../assests/person_blue_icon.svg";
 import NumPadIcon from '../../../assests/pin_code_black_icon.svg'
 import EditIcon from "../../../assests/edit_modal_icon.svg";
 import DeleteIcon from "../../../assests/delete_icon.svg";
+import AlertModal from '../AlertModal/AlertModal'
+import { Dropdown, Modal, Button } from "react-bootstrap";
 
 const hrStyle = {
   // border: 'none',
@@ -37,6 +39,8 @@ const iconStyle = {
 export default function PinCodeModal({}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
+  const [showDeleteAlterModal, setDeleteAlertModal] = useState(false);
 
   const [ShowPinCodeModal, setPinCodeModal] = useState(false);
   const [username, setUserName] = useState();
@@ -158,6 +162,22 @@ export default function PinCodeModal({}) {
           </Card>
         </div>
       </div>
+
+      <Modal
+        size=""
+        centered
+        className="abc"
+        show={showDeleteAlterModal}
+        style={{ width: "", height: "",border:" #E3982A solid 3px" }}
+        onHide={() => setDeleteAlertModal(false)}
+      >
+       
+        <Modal.Body >
+          <AlertModal message={"Are you sure you want to delete it?"} />
+        </Modal.Body>
+      </Modal>
+
+
     </div>
   );
 }

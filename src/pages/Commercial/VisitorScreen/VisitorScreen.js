@@ -7,7 +7,7 @@ import IntercomIcon from "../../../assests/intercomId_icon.png";
 import BrightnessIcon from "../../../assests/brightness_icon.svg";
 import IntercomIdModal from '../../../components/Commercial/IntercomIdModal/InterComModal'
 import VisitorScreenCard from "../../../components/Commercial/VisitorScreenCard/VisitorScreenCard";
-import { Button, Card, Form ,Modal,} from "react-bootstrap";
+import {Modal} from "react-bootstrap";
 
 const InputDivStyle = {
   borderRadius: "5px",
@@ -40,7 +40,6 @@ const InterCombtnStyle = {
 
 
 
-
 const iconStyle = {
   marginLeft: "10px",
 };
@@ -67,8 +66,8 @@ function VisitorScreen() {
   return (
     <div>
       <Header />
-      <div className="container mt-5">
-        <div className="row">
+      <div className="container mt-4">
+        <div className="row align-items-center">
           <div className="col-6">
             <div className="mb-5">
               <input

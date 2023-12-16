@@ -17,6 +17,7 @@ function LandingPage() {
   const navigate = useNavigate();
 
   const handleLoginNavigate=(()=>{
+    localStorage.setItem("hasSeenLandingPage","hasSeenLandingPage")
     navigate("/login");
   })
 

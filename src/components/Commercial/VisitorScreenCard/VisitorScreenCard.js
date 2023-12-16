@@ -1,20 +1,33 @@
 import React from "react";
 import LogoIcon from "../../../assests/header_logo.png";
-import Form from "react-bootstrap/Form";
-import searchIcon from "../../../assests/search_icon.svg";
 import SearchIcon from "@mui/icons-material/Search";
+import OKIcon from '../../../assests/ok.png'
+import NumPadSmallIcon from '../../../assests/numpad_smal_icon.svg'
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Avatar,
+ 
   TextField,
   IconButton,
 } from "@mui/material";
+
+import kIcon from '../../../assests/k_icon.svg'
+
+import UsersCard from '../../../components/Commercial/UsersCard/UsersCard'
+
+const usersData = [
+  
+  { name: 'Jane', lastName: 'Doe', userId: 'jane456' },
+  { name: 'Alice', lastName: 'Smith', userId: 'alice789' },
+  { name: 'Bob', lastName: 'Johnson', userId: 'bob101' },
+  { name: 'Eva', lastName: 'Davis', userId: 'eva202' },
+  { name: 'Charlie', lastName: 'Brown', userId: 'charlie303' },
+  { name: 'Grace', lastName: 'Lee', userId: 'grace404' },
+  
+];
+const Data = [
+
+  { name: 'Grace', lastName: 'Lee', userId: 'grace404' },
+];
+
 
 const SearchInputStyle = {
   border: "none",
@@ -25,15 +38,33 @@ const SearchInputStyle = {
   width: "377px",
   height: "38px",
 };
-const iconStyle = {
-  position: "relative",
-  right: "-30px",
+
+const userOuterDiv ={
+  border:"#FFF solid 1px",
+  margin:"5px",
+  padding:"5px",
+  borderRadius:"15px",
+  width:"377px",
+  maxHeight:"424px",
+  overflowY: "auto",
+}
+
+
+const InputDivStyle = {
+  borderRadius: "20px 0 0 20px",
+  width: "226px",
+  height: "39px",
+  border: "none",
+  backgroundColor: "#EBEBEB",
+  paddingLeft: "10%",
+  marginRight:"-15px",
+  marginLeft:"-25px"
 };
 
 function VisitorScreenCard() {
   return (
     <div
-      className="d-grid"
+      className="d-grid justify-content-center pt-5"
       style={{
         width: "430px",
         borderRadius: "40px",
@@ -73,8 +104,23 @@ function VisitorScreenCard() {
 </div>
     
 
-    <div >
+    <div style={userOuterDiv} >
+       < UsersCard usersData={usersData} />
+       <img src={kIcon} alt="" />
+       < UsersCard usersData={Data} />
+    </div>
 
+    <div className="mt-3 mb-3" style={{color:"white",fontSize:"13px",fontFamily:"Inter"}}>
+      <span style={{fontWeight:"700"}}>Enter the PIN  </span><span style={{fontWeight:"400"}}>if you know it and press </span> <span style={{fontWeight:"700"}}> OK</span>  <span style={{fontWeight:"400"}}> to open the Gate. </span>
+    </div>
+    <div className=" mb-3">
+      <img style={{position:"relative"}} src={NumPadSmallIcon} alt="" />
+      <input
+                type="text"
+                style={InputDivStyle}
+                placeholder="Enter PIN"
+              />
+      <img src={OKIcon} alt="" />
     </div>
 
     </div>

@@ -1,9 +1,10 @@
-import DoorMan_Img from "../../assests/doorman_landing_image.png";
+import DoorMan_Img from "../../../assests/doorman_landing_image.png";
 import React, { useEffect, useState } from "react";
-import EmailIcon from "../../assests/email_id_icon.svg";
-import PassIcom from "../../assests/password_icon.svg";
-import "../../App.css";
-import { Link } from "react-router-dom";
+import EmailIcon from "../../../assests/email_id_icon.svg";
+import PassIcom from "../../../assests/password_icon.svg";
+import "../../../App.css";
+import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const btnStyle = {
   width: "390px",
@@ -58,9 +59,41 @@ const forgetStyle = {
   marginLeft:"auto"
 };
 
-function Login() {
+function SuperLogin() {
+
+  const navigate= useNavigate()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+
+  const handleLogin = async () => {
+    
+  
+    try {
+      // Make a POST request to your login endpoint
+      const response = await axios.post('http://localhost:8000/super/login', {
+        email,
+        password,
+      });
+  
+      console.log(response)
+      // Assuming your server responds with a success message
+      navigate('/dashboard');
+      if (response.data.message === 'Login successful') {
+        console.log('Login successful:', response.data);
+        // Redirect to the dashboard
+       
+      } else {
+       
+        console.log('Login failed:',  response.data);
+      }
+    } catch (error) {
+      // Handle errors
+      alert(error.response.data.message)
+      console.error("API Error:", error.response.data.message);
+    }
+  };
+
 
   return (
     <div className="container-fluid ">
@@ -77,7 +110,7 @@ function Login() {
             style={{ padding: "20%" }}
           >
             <div style={loginTitleStyle}>Welcome Back</div>
-            <form>
+            <form >
               <div className="d-flex">
                 <img src={EmailIcon} alt="User Icon" style={{}} />
                 <input
@@ -117,6 +150,7 @@ function Login() {
               <button
                 style={btnStyle}
                 type="button"
+                onClick={handleLogin}
                 className="btn btn-primary mt-5"
               >
                 Login
@@ -136,20 +170,5 @@ function Login() {
   );
 }
 
-export default Login;
+export default SuperLogin;
 
-{
-  /* <div className="col-12">
-<img src={DoorMan_Img} alt="" />
-</div>
-<div className="col-12 mt-3 mb-5">
-<div className="text-center">
-  Effortless Security Access at Your <br /> Fingertips
-</div>
-</div>
-<div className="col-12 mt-5">
-<button style={btnStyle} type="button" className="btn btn-primary">
-  Get Started
-</button>
-</div> */
-}

@@ -47,6 +47,18 @@ const dateStyle = {
   marginLeft:"auto"
 };
 
+const TotalPropStyle ={
+  fontFamily: "Raleway",
+  fontSize: "18px",
+  fontWeight: "600",
+  color:"#fff"
+}
+const TotalPropNumStyle ={
+...TotalPropStyle,
+  fontWeight: "400",
+marginLeft:"5px"
+}
+
 function PropertyCard({
   dataArray,
   handleDeleteProperty,
@@ -54,10 +66,7 @@ function PropertyCard({
 }) {
   const [showPropertyModal, setPropertyModal] = useState(false);
 
-  const handleOpenModal = () => {
-    setPropertyModal(true);
-    console.log(showPropertyModal);
-  };
+  
 
   const downloadQR = (id) => {
     const canvas = document.getElementById("123456");
@@ -81,7 +90,7 @@ function PropertyCard({
             style={CardStyle}
             key={dataArray[propertyId].propertyId}
             className="col-md-4 mb-4 align-items-start justify-content-center p-0"
-            // onClick={() => handleOpenModal(dataArray[propertyId])}
+            
           >
             <div
               className=" d-flex align-items-center justify-content-between"
@@ -93,8 +102,8 @@ function PropertyCard({
                 padding: "0px 10px",
               }}
             >
-              <span>
-                Property ID: <span>{dataArray[propertyId].propertyId}</span>
+              <span style={TotalPropStyle}>
+                Property ID: <span style={TotalPropNumStyle}>{dataArray[propertyId].propertyId}</span>
               </span>{" "}
               <span></span>{" "}
               <span>

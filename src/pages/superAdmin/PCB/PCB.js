@@ -24,6 +24,9 @@ const bluebtnStyle = {
   color: "",
   fontWeight: "500",
   border: "none",
+  display:"flex",
+  justifyContent:"center",
+  alignItems:"center"
 };
 const bluesmallbtnStyle = {
   width: "200px",
@@ -34,6 +37,9 @@ const bluesmallbtnStyle = {
   color: "",
   fontWeight: "500",
   border: "none",
+  display:"flex",
+  justifyContent:"center",
+  alignItems:"center"
 };
 
 const iconStyle = {
@@ -50,11 +56,25 @@ const InputDivStyle = {
   paddingLeft: "10%",
 };
 
+const TotalPropStyle ={
+  fontFamily: "Raleway",
+  fontSize: "16px",
+  fontWeight: "400",
+  color:"#535353"
+}
+const TotalPropNumStyle ={
+...TotalPropStyle,
+fontWeight: "600",
+}
+
+const container ={
+  minWidth:"1200px"
+}
 
 function PCB() {
   const [PCBs, setPCBs] = useState([]);
   const [pcbId, setPCBId] = useState("");
-
+  const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
     // Function to fetch properties
@@ -78,6 +98,10 @@ function PCB() {
 
   const handleSubmit = () => {
     // Your logic for handling form submission
+    if(pcbId ===""){
+      alert("please enter pcbId")
+      return
+    }
     console.log("Form submitted:", pcbId);
     // Call your API endpoint here using axios or fetch
     // Example:
@@ -88,7 +112,8 @@ function PCB() {
         setPCBs(response.data.pcbs || []);
       })
       .catch((error) => {
-        console.error("API call failed:", error.message);
+        console.log("API call failed:", error.response.data.error);
+        alert( error.response.data.error)
       });
   };
 
@@ -119,10 +144,42 @@ function PCB() {
   };
 
 
+  const handleSearchInputChange = (e) => {
+    setSearchInput(e.target.value);
+  };
+  
+  
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      // Perform search logic here, for example, filter residents based on searchInput
+      const filteredResidents = Object.keys(PCBs).filter((residentId) =>
+      PCBs[residentId].pcbId
+          .toLowerCase()
+          .includes(searchInput.toLowerCase())
+      );
+  
+      const filteredResidentsArray = filteredResidents.map(
+        (residentId) => PCBs[residentId]
+      );
+  
+      // Update the state with the filtered residents
+      setPCBs(filteredResidentsArray);
+  
+      console.log(
+        filteredResidentsArray,
+        "Filtered Residents:",
+        filteredResidents
+      );
+    }
+  };
+
+  
+
+
   return (
     <div>
       <Header />
-      <div className="container">
+      <div className="container" style={container}>
         <div className="row mt-4 d-flex justify-content-between align-items-center pb-5">
           <div
             className="col-2 "
@@ -146,7 +203,9 @@ function PCB() {
               id="SearchInput"
               size="lg"
               type="text"
-              placeholder="Search"
+              onChange={handleSearchInputChange}
+              placeholder="Search PCB"
+              onKeyPress={handleKeyPress}
             />
           </div>
         </div>
@@ -193,7 +252,8 @@ function PCB() {
 
         <div className="row mt-2">
           <div className="col-2 text-start">
-            <span>Total PCBs:{Object.keys(PCBs).length}</span>
+          <span style={TotalPropStyle}>Total Properties: <span style={TotalPropNumStyle} >{Object.keys(PCBs).length}</span> </span>
+            {/* <span>Total PCBs:{Object.keys(PCBs).length}</span> */}
           </div>
         </div>
         <hr className="" />

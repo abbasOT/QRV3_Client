@@ -7,7 +7,7 @@ import ResidentCard from "../../../components/Commercial/ResidentCard/ResidentCa
 import PersonIcon from "../../../assests/person_icon.svg";
 import AddResidentIcon from "../../../assests/add_residen_icon.svg";
 import React, { useEffect, useState } from "react";
-import { Dropdown, Modal, Button } from "react-bootstrap";
+import { Modal} from "react-bootstrap";
 import axios from "axios";
 import AddResidentModal from "../../../components/Commercial/AddResidentModal/AddResidentModal";
 import { useParams } from "react-router-dom";
@@ -20,6 +20,9 @@ const btnStyle = {
   backgroundColor: "#EEE",
   color: "#2A3649",
   fontWeight: "700",
+  display:"flex",
+  justifyContent:"center",
+  alignItems:"center"
 };
 
 const SearchInputStyle = {
@@ -56,6 +59,7 @@ function Residents() {
     console.log(showAddUserModal);
   };
   let com_prop_id = localStorage.getItem("userKey");
+
   const handleSendInvitation = async () => {
     try {
       // Assuming formData contains the resident details
@@ -67,7 +71,7 @@ function Residents() {
 
       // Make a POST request to the backend endpoint
       const response = await axios.post(
-        `http://localhost:8000/commercialAdmin/add_residents/${com_prop_id}`,
+        `https://localhost:8000/commercialAdmin/add_residents/${com_prop_id}`,
         {
           name,
           lname,
@@ -99,7 +103,7 @@ function Residents() {
       try {
         // Make a GET request to fetch residents with the specified comPropId
         const response = await axios.get(
-          `http://localhost:8000/commercialAdmin/get_residents/${com_prop_id}`
+          `https://localhost:8000/commercialAdmin/get_residents/${com_prop_id}`
         );
 
         // Assuming the response contains a property 'residents' with an array of resident data
@@ -117,25 +121,36 @@ function Residents() {
     setSearchInput(e.target.value);
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      // Perform search logic here, for example, filter residents based on searchInput
+      const filteredResidents = Object.keys(Residents).filter((residentId) =>
+        Residents[residentId].name
+          .toLowerCase()
+          .includes(searchInput.toLowerCase())
+      );
+
+      const filteredResidentsArray = filteredResidents.map(
+        (residentId) => Residents[residentId]
+      );
+
+      // Update the state with the filtered residents
+      setResidents(filteredResidentsArray);
+
+      console.log(
+        filteredResidentsArray,
+        "Filtered Residents:",
+        filteredResidents
+      );
+    }
+  };
+
+  const suspendedResidentsCount = Residents
+  ? Object.values(Residents).filter(resident => resident.status === 'suspended').length
+  : 0;
 
 
-const handleKeyPress = (e) => {
-  if (e.key === 'Enter') {
-    // Perform search logic here, for example, filter residents based on searchInput
-    const filteredResidents = Object.keys(Residents).filter((residentId) =>
-    Residents[residentId].name.toLowerCase().includes(searchInput.toLowerCase())
-    );
-
-    const filteredResidentsArray = filteredResidents.map((residentId) => Residents[residentId]);
-
-    // Update the state with the filtered residents
-    setResidents(filteredResidentsArray);
-
- 
-    console.log( filteredResidentsArray,"Filtered Residents:", filteredResidents);
-  }
-};
-
+console.log(Residents)
   // console.log(id);
 
   return (
@@ -153,8 +168,14 @@ const handleKeyPress = (e) => {
               Total Residents{" "}
               <span style={{ fontWeight: "700" }}>
                 {" "}
-                {Object.keys(Residents).length}
-              </span>{" "}
+                <span style={{ fontWeight: "700" }}>
+                  {Residents && Residents.length > 0 ? (
+                    <>0</>
+                  ) : (
+                    <>{Residents ? Object.keys(Residents).length : 0}</>
+                  )}
+                </span>
+              </span>
             </span>
           </div>
           <div className="col-2 " style={{ textAlign: "right" }}>
@@ -182,7 +203,9 @@ const handleKeyPress = (e) => {
             {" "}
             <span>
               Suspended Resident{" "}
-              <span style={{ fontWeight: "700", color: "#DC5656" }}> 2</span>{" "}
+              <span style={{ fontWeight: "700", color: "#DC5656" }}>
+                {suspendedResidentsCount}
+              </span>{" "}
             </span>
           </div>
           <div className="col-6 d-flex">
@@ -202,7 +225,11 @@ const handleKeyPress = (e) => {
         </div>
         <hr className="mt-5" />
         <div className="row mt-5 justify-content-around">
-          <ResidentCard icon={PersonIcon} dataArray={Residents} setResidents={setResidents} />
+          <ResidentCard
+            icon={PersonIcon}
+            dataArray={Residents}
+            setResidents={setResidents}
+          />
         </div>
       </div>
 

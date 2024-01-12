@@ -19,6 +19,7 @@ const hrStyle = {
     width: "300px",
     marginLeft: "30px",
     outline: "none",
+    color: "#566D90",
   };
   const btnStyle = {
     width: "230px",
@@ -34,59 +35,60 @@ const hrStyle = {
   }
 
 
-export default function ChangePassword({  }) {
+export default function ChangePassword({ setChangePassModal }) {
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+
  
   const [isListed, setIsListed] = useState(false);
   const [formData, setFormData] = useState({
-    fname: "",
-    lname: "",
-    email: "",
-    password: "",
-    phoneNo: "",
+    oldpassword:"",
+    newpassword: "",
+    confirmpassword: "",
   });
 
- 
-
-  const handleSubmit = (event) => {
-    setIsListed(true)
-    event.preventDefault();
-    // setEmail(formData.email)
-    // Here you would perform validation on form data before sending it to the server
-
-    axios
-      .post(`https://sailiteasy.com/api/users/register`, formData)
-      .then((response) => {
-        // Handle success
-        console.log("User registered:", response.data.message);
-        // alert.show(response.data.message,{
-        //   type: "success",
-        //   timeout: 5000,
-        // });
-        // setshowSignUpModal(false);
-        // setConfirmEmailModal(true);
-        // setIsListed(false)
-        // Perform any additional actions (redirect, state update, etc.) upon successful registration
-      })
-      .catch((error) => {
-        if(error.response){
-    //       alert.show(error.response.data.message, {
-    //     type: "error",
-    //     timeout: 5000,
-    //   });
-      setIsListed(false)
-      }else{
-        // alert.show("Server Not Responding Try Again Later",{
-        //   type: "error",
-        //   timeout: 5000,
-        // });
-        setIsListed(false)
+  let  com_user_id =     localStorage.getItem("userKey");
+  const handlePassChange = async () => {
+    try {
+      // Extract old, new, and confirm passwords from the formData state
+      const { oldpassword, newpassword, confirmpassword } = formData;
+  
+      // Make sure new and confirm passwords match
+      if (newpassword !== confirmpassword) {
+        // Handle error (passwords don't match)
+        console.error('New password and confirm password do not match');
+        return;
       }
-     
+  
+      // Make a request to change the password
+      const response = await axios.put(`https://localhost:8000/commercialAdmin/changePassword/${com_user_id}`, {
+        oldpassword,
+        newpassword,
       });
+  
+      // Handle the response (you can check response.data for messages)
+      console.log(response.data);
+      alert("Password changed successfully")
+      setChangePassModal(false)
+  
+      // Optionally, reset the form or perform other actions on success
+      setFormData({
+        oldpassword: '',
+        newpassword: '',
+        confirmpassword: '',
+      });
+    } catch (error) {
+      // Handle errors (server error, invalid password, etc.)
+      console.error('Error changing password:', error.response.data);
+    }
   };
+
+  const handleInputChange = (field, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+  };
+
 
   return (
     <div>
@@ -95,7 +97,7 @@ export default function ChangePassword({  }) {
         <Card.Body className="p-0">
           <div className="mb-3 mt-md-" style={{ padding: "5% 8%" }}>
             <div className="mb-3">
-              <Form onSubmit={handleSubmit} >
+              <Form  >
               
              
             {/* 1 */}
@@ -111,8 +113,8 @@ export default function ChangePassword({  }) {
                 placeholder="Old Password"
                 style={inputFieldStyle}
                 autoComplete="off"
-                value={email} // Bind email state to the input value
-                onChange={(e) => setEmail(e.target.value)} // Update email state on input change
+                value={formData.oldpassword}
+          onChange={(e) => handleInputChange('oldpassword', e.target.value)}
               />
             </div>
             <hr style={hrStyle}></hr>
@@ -129,8 +131,8 @@ export default function ChangePassword({  }) {
                 id="input-field"
                 style={inputFieldStyle}
                 autoComplete="off"
-                value={password} // Bind email state to the input value
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.newpassword}
+                onChange={(e) => handleInputChange('newpassword', e.target.value)}
               />
             </div>
             <hr style={hrStyle}></hr>
@@ -148,18 +150,19 @@ export default function ChangePassword({  }) {
                 id="input-field"
                 style={inputFieldStyle}
                 autoComplete="off"
-                value={password} // Bind email state to the input value
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.confirmpassword}
+                onChange={(e) => handleInputChange('confirmpassword', e.target.value)}
               />
             </div>
             <hr style={hrStyle}></hr>
-           <div style={{display:"flex",justifyContent:"center"}}>
+           <div  style={{display:"flex",justifyContent:"center"}}>
            <button
+           
               style={btnStyle}
               type="button"
-              className="btn btn-primary mt-5"
-              // onClick={handleSubmit}
-            //   onClick={handleOpenModal}
+              className="btn btn-primary mt-5 shadow"
+              onClick={handlePassChange}
+         
             >
              Change Password
             </button>

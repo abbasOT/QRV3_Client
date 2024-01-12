@@ -15,12 +15,7 @@ const btnStyle = {
   backgroundColor: "white",
   color: "#2A3649",
 };
-const inputIconStyle = {
-  width: "30px",
-  height: "30px",
-  marginRight: "20px",
-  verticalAlign: "middle",
-};
+
 const hrStyle = {
   // border: 'none',
   width: "100%",
@@ -38,15 +33,14 @@ const inputFieldStyle = {
 };
 
 const loginTitleStyle = {
-  fontFamily: "'Raleway', sans-serif",
+  fontFamily: "Raleway",
   fontWeight: "500",
   fontSize: "35px",
   lineHeight: "42px",
   textAlign: "center",
-  marginBottom: "12%", // You have margin-bottom twice, I kept the first occurrence
+  marginBottom: "12%",
   color: "#FFFFFF",
 };
-
 
 const forgetStyle = {
   color: "#FFFFFF",
@@ -71,21 +65,31 @@ function CommercialLogin() {
       try {
         // Make API request using Axios to login
         const response = await axios.post(
-          "http://localhost:8000/commercialAdmin/login",
+          "https://localhost:8000/commercialAdmin/login",
           values
         );
-            const userKey =response.data.userKey
+        const data = response.data;
+        const user = response.data.user;
+        console.log(user)
         // Handle the response as needed
-        console.log("API Response:", userKey);
-        localStorage.setItem("userKey", userKey);
+        console.log("API Response:", data);
+        localStorage.setItem("name",user.name)
+        localStorage.setItem("email",user.email)
+        localStorage.setItem("address",user.address)
+        localStorage.setItem("lname",user.lastName)
+        localStorage.setItem("number",user.phoneNumber)
+        localStorage.setItem("userKey", data.userKey);
         alert("Login success");
-        navigate("/get_property");
-        // Add any additional logic or state updates after a successful form submission
+        if (data.user.status === "active") {
+          console.log(data.user.status);
+          navigate(`/property_residents/${data.userKey}`);
+        } else {
+          navigate("/get_property");
+        }
       } catch (error) {
         // Handle API request errors
-        alert(error.response.data.error)
+        alert(error.response.data.error);
         console.error("API Error:", error.response.data.error);
-        // You can update state or show an error message to the user
       }
     },
   });
@@ -95,7 +99,11 @@ function CommercialLogin() {
       <div className="row   ">
         <div className="col-6 ">
           <div className="d-flex align-items-center justify-content-center h-100">
+            <div>
             <img src={DoorMan_Img} alt="" />
+            <p>Effortless Security Access at Your Fingertips</p>
+            </div>
+          
           </div>
         </div>
 
@@ -108,7 +116,7 @@ function CommercialLogin() {
             style={{ padding: "20%" }}
           >
             <div style={loginTitleStyle}>Welcome Back</div>
-           <form onSubmit={formik.handleSubmit}>
+            <form onSubmit={formik.handleSubmit}>
               <div className="d-flex">
                 <img src={EmailIcon} alt="User Icon" style={{}} />
                 <input
@@ -142,17 +150,17 @@ function CommercialLogin() {
               <hr style={hrStyle}></hr>
 
               <div className="d-grid">
-                <p className="mt-5" style={forgetStyle}>
-                  Forget Password?
+                <p className="mt-2" style={forgetStyle}>
+                 <b>Forget Password?</b> 
                 </p>
               </div>
               <button
-  style={btnStyle}
-  type="submit"
-  className="btn btn-primary mt-5"
->
-  Login
-</button>
+                style={btnStyle}
+                type="submit"
+                className="btn btn-primary mt-5"
+              >
+              <b>Login</b>  
+              </button>
 
               <div className="mt-5" style={{ color: "white" }}>
                 Don't have an account?{" "}
@@ -160,7 +168,7 @@ function CommercialLogin() {
                   to="/signup"
                   style={{ textDecoration: "none", color: "white" }}
                 >
-                  Sign Up
+                <b> Sign Up</b> 
                 </Link>
               </div>
             </form>

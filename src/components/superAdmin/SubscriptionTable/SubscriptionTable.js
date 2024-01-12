@@ -36,8 +36,10 @@ const tableHeaderItemStyle = {
 
 
 function SubscriptionTable({data}) {
+
+  console.log(data)
   return (
-    <>  <Table  hover striped responsive className="custom-table">
+    <>  <Table  hover striped  className="custom-table" >
     <thead  >
       <tr>
         <th style={NameStyle}>Name</th>
@@ -48,21 +50,45 @@ function SubscriptionTable({data}) {
       </tr>
     </thead>
     <tbody>
-    {data.map((item, index) => (
-          <tr key={index} style={tableRowStyle}>
-          <td style={tableRowStyle} >{item.name}</td>
-          <td  style={tableRowStyle}>{item.email}</td>
-          <td style={tableRowStyle}>{item.info}</td>
-          <td style={tableRowStyle} >{item.propertyId}</td>
-          <td ><img src={DeleteIocn} alt="" /></td>
-       
-        </tr>
-        ))}
-  
-      {/* Add more rows as needed */}
-    </tbody>
+    {data.length === 0 ? (
+  <tr>
+    <td colSpan="5" style={tableRowStyle}>
+      No data available
+    </td>
+  </tr>
+) : (
+  data.map((user) => (
+    <tr key={user.id} style={tableRowStyle}>
+      <td style={tableRowStyle}>{user.name ? user.name : user.UserName} {user.lastName ? user.lastName : user.LastName}</td>
+      <td style={tableRowStyle}>{user.email}</td>
+      <td style={tableRowStyle}>  {!user.propertyId ? 'N\\S' : user.id && user.id.charAt(0).toUpperCase() === 'C' ? 'C' : 'R'}</td>
+      <td style={tableRowStyle}>{user.propertyId}</td>
+      <td><img src={DeleteIocn} alt="" /></td>
+    </tr>
+  ))
+)}
+
+</tbody>
   </Table></>
   )
 }
 
 export default SubscriptionTable
+
+
+// {Object.keys(data).map((numericKey) => (
+//   <React.Fragment key={numericKey}>
+//     {Object.keys(data[numericKey]).map((userKey) => {
+//       const user = data[numericKey][userKey];
+//       return (
+//         <tr key={user.id} style={tableRowStyle}>
+//           <td style={tableRowStyle}>{user.firstName} {user.lastName}</td>
+//           <td style={tableRowStyle}>{user.email}</td>
+//           <td style={tableRowStyle}>{user.info}</td>
+//           <td style={tableRowStyle}>{user.propertyId}</td>
+//           <td><img src={DeleteIocn} alt="" /></td>
+//         </tr>
+//       );
+//     })}
+//   </React.Fragment>
+// ))}

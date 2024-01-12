@@ -84,6 +84,7 @@ export default function UserDetailModal({Resident ,setResidents }) {
   };
 
   const handleDeleteResident = (userId) => {
+    console.log(userId)
     setUserId(userId)
     setDeleteAlertModal(true);
     console.log(showDeleteAlterModal);
@@ -113,8 +114,8 @@ export default function UserDetailModal({Resident ,setResidents }) {
     
     }
    
-console.log(value)
   }
+
   let com_prop_id = localStorage.getItem("userKey");
   const DeleteUser = async () => {
     try {
@@ -129,9 +130,10 @@ console.log(value)
   };
 
   const SuspendUser = async () => {
+    const status = "suspended"
     try {
       // Make a DELETE request to super/deleteProperty with the propertyId
-      const response = await axios.put(`${process.env.REACT_APP_URL1}/commercialAdmin/suspend_resident/${com_prop_id}/${userId}`);
+      const response = await axios.put(`${process.env.REACT_APP_URL1}/commercialAdmin/suspend_resident/${status}/${com_prop_id}/${userId}`);
   
       // Update the state or perform other actions after a successful delete
       console.log(response.data)
@@ -193,7 +195,7 @@ console.log(userId)
                         id="input-field"
                         style={inputFieldStyle}
                         autoComplete="off"
-                        value={Resident.email} // Bind email state to the input value
+                        value={Resident.address} // Bind email state to the input value
                         onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
@@ -208,7 +210,7 @@ console.log(userId)
                         id="input-field"
                         style={inputFieldStyle}
                         autoComplete="off"
-                        value={password} // Bind email state to the input value
+                        value={Resident.number} // Bind email state to the input value
                         onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
@@ -222,7 +224,7 @@ console.log(userId)
                         id="input-field"
                         style={inputFieldStyle}
                         autoComplete="off"
-                        value={password} // Bind email state to the input value
+                        value={Resident.email} // Bind email state to the input value
                         onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>

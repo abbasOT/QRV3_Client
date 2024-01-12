@@ -1,0 +1,30 @@
+.circle-letter {
+    position: relative;
+    display: inline-block;
+    border: 1px solid #fff;
+    border-radius: 50%;
+ 
+    margin: 4px;
+    color: #fff;
+    height: 25px;
+    width: 25px;
+  }
+  
+  .circle-letter::before,
+  .circle-letter::after {
+    content: '';
+    position: absolute;
+    height: 1px;
+    width: 125px;
+    background-color: #fff;
+    top: 50%;
+  }
+  
+  .circle-letter::before {
+    left: 28px; 
+  }
+  
+  .circle-letter::after {
+    right: 28px; 
+  }
+  

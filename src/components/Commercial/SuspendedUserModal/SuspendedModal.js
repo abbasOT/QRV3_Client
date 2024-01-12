@@ -55,56 +55,94 @@ const iconStyle = {
   marginLeft: "20px",
 };
 
-export default function SuspendedUserModal({}) {
+export default function SuspendedUserModal({Resident ,setResidents }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [showSuspendedAlertModal, setSuspendedAlertModal] = useState(false);
+
+  const [userId,setUserId]=useState()
+  const [showSuspendedModal, setSuspendedModal] = useState(false);
   const [isListed, setIsListed] = useState(false);
   const [showDeleteAlterModal, setDeleteAlertModal] = useState(false);
+  const [showReactivateModal, setReactivateModal] = useState(false);
 
-  const [formData, setFormData] = useState({
-    fname: "",
-    lname: "",
-    email: "",
-    password: "",
-    phoneNo: "",
-  });
 
-  const handleSubmit = (event) => {
-    setIsListed(true);
-    event.preventDefault();
-    // setEmail(formData.email)
-    // Here you would perform validation on form data before sending it to the server
 
-    axios
-      .post(`https://sailiteasy.com/api/users/register`, formData)
-      .then((response) => {
-        // Handle success
-        console.log("User registered:", response.data.message);
-        // alert.show(response.data.message,{
-        //   type: "success",
-        //   timeout: 5000,
-        // });
-        // setshowSignUpModal(false);
-        // setConfirmEmailModal(true);
-        // setIsListed(false)
-        // Perform any additional actions (redirect, state update, etc.) upon successful registration
-      })
-      .catch((error) => {
-        if (error.response) {
-          //       alert.show(error.response.data.message, {
-          //     type: "error",
-          //     timeout: 5000,
-          //   });
-          setIsListed(false);
-        } else {
-          // alert.show("Server Not Responding Try Again Later",{
-          //   type: "error",
-          //   timeout: 5000,
-          // });
-          setIsListed(false);
-        }
-      });
+  const handleSuspendResidend = (userId) => {
+    
+
+    setUserId(userId)
+    setReactivateModal(true);
+    console.log(showSuspendedAlertModal);
+    
+  };
+
+  const handleDeleteResident = (userId) => {
+    console.log(userId)
+    setUserId(userId)
+    setDeleteAlertModal(true);
+    console.log(showDeleteAlterModal);
+    
+  };
+
+  const handleClick =(value,label)=>{
+    setDeleteAlertModal(false);
+    setReactivateModal(false);
+    if(label=="delete"){
+      if(value==="yes"){
+        alert("deleted")
+        DeleteUser();
+        return
+      }
+    }else if(label=="reactivate"){
+      if(value==="yes"){
+        alert("suspended")
+        Reactivate();
+        return
+      }
+    }
+    if(value==="yes"){
+      handleOpenModal()
+    }else{
+    
+    }
+   
+console.log(value)
+  }
+
+  const handleOpenModal = () => {
+    setSuspendedModal(true);
+    console.log(showSuspendedModal);
+    
+  };
+  
+  let com_prop_id = localStorage.getItem("userKey");
+
+  const DeleteUser = async () => {
+    try {
+      // Make a DELETE request to super/deleteProperty with the propertyId
+      const response = await axios.delete(`${process.env.REACT_APP_URL1}/commercialAdmin/delete_resident/${com_prop_id}/${userId}`);
+  
+      // Update the state or perform other actions after a successful delete
+      setResidents(response.data.residents || []);
+    } catch (error) {
+      console.error('Error deleting property:', error.message);
+    }
+  };
+
+  const Reactivate = async () => {
+    const status = "active"
+    try {
+      // Make a DELETE request to super/deleteProperty with the propertyId
+      const response = await axios.put(`${process.env.REACT_APP_URL1}/commercialAdmin/suspend_resident/${status}/${com_prop_id}/${userId}`);
+  
+      // Update the state or perform other actions after a successful delete
+      console.log(response.data)
+      setResidents(response.data.residents || []);
+    } catch (error) {
+      console.error('Error deleting property:', error.message);
+    }
   };
 
   return (
@@ -116,7 +154,7 @@ export default function SuspendedUserModal({}) {
             <Card.Body className="p-0">
               <div className="mb-" style={{ padding: "5% 8%" }}>
                 <div className="mb-3">
-                <Form onSubmit={handleSubmit}>
+                <Form>
                     {/* 1 */}
                     <div className="d-flex mt-">
                       <img src={Name_Icon} alt="User Icon" style={iconStyle} />
@@ -126,7 +164,7 @@ export default function SuspendedUserModal({}) {
                         placeholder="First Name"
                         style={inputFieldStyle}
                         autoComplete="off"
-                        value={email} // Bind email state to the input value
+                        value={Resident.name} // Bind email state to the input value
                         onChange={(e) => setEmail(e.target.value)} // Update email state on input change
                       />
                     </div>
@@ -140,7 +178,7 @@ export default function SuspendedUserModal({}) {
                         placeholder="Last Name"
                         style={inputFieldStyle}
                         autoComplete="off"
-                        value={email} // Bind email state to the input value
+                        value={Resident.lname} // Bind email state to the input value
                         onChange={(e) => setEmail(e.target.value)} // Update email state on input change
                       />
                     </div>
@@ -158,7 +196,7 @@ export default function SuspendedUserModal({}) {
                         id="input-field"
                         style={inputFieldStyle}
                         autoComplete="off"
-                        value={password} // Bind email state to the input value
+                        value={Resident.email} // Bind email state to the input value
                         onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
@@ -191,7 +229,6 @@ export default function SuspendedUserModal({}) {
                         onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
-
                     <hr style={hrStyle}></hr>
                   </Form>
                 </div>
@@ -204,7 +241,7 @@ export default function SuspendedUserModal({}) {
               style={redbtnStyle}
               type="button"
               className="btn btn-primary shadow-sm"
-              // onClick={handleSubmit}
+              onClick={()=> handleSuspendResidend(Resident.userId)}
               
             >
          <img src={ReactivationIcon} style={{}} alt="" />   Reactive Resident
@@ -213,7 +250,7 @@ export default function SuspendedUserModal({}) {
               style={btnStyle}
               type="button"
               className="btn btn-primary mt-2"
-              // onClick={handleSubmit}
+              onClick={ ()=> handleDeleteResident(Resident.userId)}
               
             >
          <img src={DeleteIcon} alt="" />   Delete Resident
@@ -226,16 +263,29 @@ export default function SuspendedUserModal({}) {
         size=""
         centered
         className="abc"
+        show={showReactivateModal}
+        style={{ width: "", height: "",border:" #E3982A solid 3px" }}
+        onHide={() => setReactivateModal(false)}
+      >
+       
+        <Modal.Body >
+        <AlertModal message={"Are you sure you want to Reactivate it?"} label={"reactivate"} handleClick={handleClick} />
+        </Modal.Body>
+      </Modal>
+
+      <Modal
+        size=""
+        centered
+        className="abc"
         show={showDeleteAlterModal}
         style={{ width: "", height: "",border:" #E3982A solid 3px" }}
         onHide={() => setDeleteAlertModal(false)}
       >
        
         <Modal.Body >
-          <AlertModal message={"Are you sure you want to delete it?"} />
+          <AlertModal message={"Are you sure you want to delete it?"} label={"delete"}  handleClick={handleClick} />
         </Modal.Body>
       </Modal>
-
      
 
     </div>

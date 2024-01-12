@@ -31,7 +31,7 @@ function PcbCard({ dataArray, handleDeletePCB, handleUpdatePCB }) {
               }}
             >
               <span>
-                PCB ID: <span>{dataArray[pcbId].pcbId}</span>{" "}
+                PCB ID:  <b>{dataArray[pcbId].pcbId.toUpperCase()}</b>{" "}
               </span>{" "}
               <span></span>{" "}
               <span>
@@ -58,7 +58,7 @@ function PcbCard({ dataArray, handleDeletePCB, handleUpdatePCB }) {
           </div>
         ))
       ) : (
-        <p>No properties available.</p>
+        <p>No pcbs available.</p>
       )}
     </>
   );

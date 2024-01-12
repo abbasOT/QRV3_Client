@@ -41,30 +41,15 @@ const iconStyle = {
   position: "relative",
   marginRight: "-40px", // Adjust the spacing between the icon and the text
 };
-
-
-const dataArray = [
-  { propertyId: "IOKL#HY76&" },
-  { propertyId:"IOKL#HY76&" },
-  { propertyId:"IOKL#HY76&" },
-  { propertyId:"IOKL#HY76&" },
-  { propertyId: "IOKL#HY76&" },
-  { propertyId:"IOKL#HY76&" },
-  { propertyId:"IOKL#HY76&" },
-  { propertyId: "IOKL#HY76&" },
-  { propertyId: "IOKL#HY76&" },
-  { propertyId: "IOKL#HY76&" },
-  { propertyId: "IOKL#HY76&" },
-  { propertyId: "IOKL#HY76&" }
-];
-
-
-
+const container ={
+  minWidth:"1200px"
+}
 
 function StandByPcb() {
 
   const [PCBs, setPCBs] = useState([]);
-
+  const [searchInput, setSearchInput] = useState("");
+  
   useEffect(() => {
     // Function to fetch properties
     const fetchProperties = async () => {
@@ -97,10 +82,41 @@ function StandByPcb() {
   };
 
 
+  const handleSearchInputChange = (e) => {
+    setSearchInput(e.target.value);
+  };
+  
+  
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      // Perform search logic here, for example, filter residents based on searchInput
+      const filteredResidents = Object.keys(PCBs).filter((residentId) =>
+      PCBs[residentId].pcbId
+          .toLowerCase()
+          .includes(searchInput.toLowerCase())
+      );
+  
+      const filteredResidentsArray = filteredResidents.map(
+        (residentId) => PCBs[residentId]
+      );
+  
+      // Update the state with the filtered residents
+      setPCBs(filteredResidentsArray);
+  
+      console.log(
+        filteredResidentsArray,
+        "Filtered Residents:",
+        filteredResidents
+      );
+    }
+  };
+
+
+
   return (
     <div>
       <Header />
-      <div className="container">
+      <div className="container" style={container}>
         <div className="row mt-4 d-flex justify-content-between align-items-center pb-5">
           <div
             className="col-2 "
@@ -125,7 +141,9 @@ function StandByPcb() {
               id="SearchInput"
               size="lg"
               type="text"
-              placeholder="Search"
+              onChange={handleSearchInputChange}
+              placeholder="Search PCB"
+              onKeyPress={handleKeyPress}
             />
           </div>
         </div>

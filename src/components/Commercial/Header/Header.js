@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import NotificationIcon from "../../../assests/notification_icon.svg";
 import Logo from "../../../assests/header_logo.png";
 import ResidentIcon from "../../../assests/resident.svg";
@@ -8,17 +8,29 @@ import Events from "../../../assests/events.svg";
 import LightIcon from "../../../assests/light.svg";
 import { Link, useLocation,useNavigate } from "react-router-dom";
 import "../../../App.css";
+import EditIcon from '../../../assests/edit_icon.svg'
+import GoIcon from '../../../assests/go_next.svg'
+
+import ResidentOrgIcon from "../../../assests/org1.svg";
+import PincodeOrgIcon from "../../../assests/org2.svg";
+import VisitorScreenOrg from "../../../assests/org3.svg";
+import EventsOrg from "../../../assests/org4.svg";
+import LightOrgIcon from "../../../assests/org5.svg";
+
 
 const NavItemsStyle = {
   margin: "30px",
   textDecoration: "none",
+  display:"flex"
 };
 
 const NavItemsColor = {
-  color: "white",
-  whiteSpace: "nowrap",
-  fontFamily: "Raleway",
-  fontWeight: "600",
+  color: 'white',
+  whiteSpace: 'nowrap',
+  fontFamily:"Raleway",
+  fontWeight:"500",
+  marginLeft:"10px",
+  fontSize:"18px"
 };
 
 const selectedNavStyle = {
@@ -27,15 +39,19 @@ const selectedNavStyle = {
 };
 
 const Header = () => {
+  const [showModal, setOpenModal] = useState(false);
+
   const navigate =useNavigate()
   const location = useLocation();
+  const propId = localStorage.getItem("PropertyId")
 
   const handleLogout = () => {
- 
     localStorage.clear();
-
     navigate("/login");
   };
+
+
+
   return (
     <div className="container-fluid" style={{ backgroundColor: "#2A3649" }}>
       <div className="row d-flex">
@@ -46,12 +62,13 @@ const Header = () => {
         </div>
 
         <div className="col-8 d-flex justify-content-center align-items-center">
-          <Link to="/property_residents" style={NavItemsStyle}>
-            <img src={ResidentIcon} alt="" />{" "}
+        <Link to={`/property_residents/${propId}`} style={NavItemsStyle}>
+            <img src={location.pathname.includes("/property_residents")
+                  ?ResidentOrgIcon:ResidentIcon} alt="" />{" "}
             <span
               className=""
               style={
-                location.pathname === "/property_residents"
+                location.pathname.includes("/property_residents")
                   ? selectedNavStyle
                   : NavItemsColor
               }
@@ -61,7 +78,8 @@ const Header = () => {
           </Link>
 
           <Link to="/pin_code" style={NavItemsStyle}>
-            <img src={PincodeIcon} alt="" />{" "}
+            <img src={location.pathname === "/pin_code"
+                  ?PincodeOrgIcon:PincodeIcon} alt="" />{" "}
             <span className=""  style={
                 location.pathname === "/pin_code"
                   ? selectedNavStyle
@@ -72,9 +90,10 @@ const Header = () => {
           </Link>
 
           <Link to="/visitor_screen" style={NavItemsStyle}>
-            <img src={VisitorScreen} alt="" />{" "}
+            <img src={location.pathname === "/visitor_screen"
+                  ?VisitorScreenOrg:VisitorScreen} alt="" />{" "}
             <span className="" style={
-                location.pathname === "visitor_screen"
+                location.pathname === "/visitor_screen"
                   ? selectedNavStyle
                   : NavItemsColor
               }>
@@ -83,7 +102,8 @@ const Header = () => {
           </Link>
 
           <Link to="/events" style={NavItemsStyle}>
-            <img src={Events} alt="" />{" "}
+            <img src={location.pathname === "/events"
+                  ?EventsOrg:Events} alt="" />{" "}
             <span className=""  style={
                 location.pathname === "/events"
                   ? selectedNavStyle
@@ -95,7 +115,8 @@ const Header = () => {
           </Link>
 
           <Link to="/light_timer" style={NavItemsStyle}>
-            <img src={LightIcon} alt="" />{" "}
+            <img src={location.pathname === "/light_timer"
+                  ?LightOrgIcon:LightIcon} alt="" />{" "}
             <span className=""  style={
                 location.pathname === "/light_timer"
                   ? selectedNavStyle
@@ -106,14 +127,25 @@ const Header = () => {
           </Link>
         </div>
 
-        <div className="col-2 d-flex justify-content-center align-items-center">
+        <div className="col-2 d-grid justify-content-center align-items-center" style={{height:"fit-content" ,margin:"auto"}}>
           {" "}
-          <img src={NotificationIcon} alt="" />
-          <button onClick={handleLogout}>
-              Logout
-          </button>
+          <div className="d-flex align-items-center">
+          <img style={{cursor:"pointer"}} src={NotificationIcon} alt="" />
+          <Link to={"/profile"}>
+          <img   style={{cursor:"pointer"}} src={EditIcon} alt=""   />
+          </Link>
+        
+          </div>
+          <div>
+          <img style={{cursor:"pointer"}} src={GoIcon} alt="" />
+          </div>
+          
+         
         </div>
       </div>
+
+    
+
     </div>
   );
 };

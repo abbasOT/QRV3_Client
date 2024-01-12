@@ -58,6 +58,9 @@ const forgetStyle = {
   float: "right",
   marginLeft:"auto"
 };
+const container ={
+  minWidth:"1200px"
+}
 
 function SuperLogin() {
 
@@ -71,7 +74,7 @@ function SuperLogin() {
   
     try {
       // Make a POST request to your login endpoint
-      const response = await axios.post('http://localhost:8000/super/login', {
+      const response = await axios.post('https://localhost:8000/super/login', {
         email,
         password,
       });
@@ -96,7 +99,7 @@ function SuperLogin() {
 
 
   return (
-    <div className="container-fluid ">
+    <div className="container-fluid " style={container}>
       <div className="row   ">
         <div className="col-6 ">
           <div className="d-flex align-items-center justify-content-center h-100">
@@ -106,12 +109,12 @@ function SuperLogin() {
 
         <div className="col-6" style={{ backgroundColor: "#2A3649",height:"100vh" }}>
           <div
-            className=" align-items-center justify-content-center h-100"
+            className=" align-items-center justify-content-center h-100 mt-4 "
             style={{ padding: "20%" }}
           >
-            <div style={loginTitleStyle}>Welcome Back</div>
+            <div className="mt-4" style={loginTitleStyle}>Welcome Back</div>
             <form >
-              <div className="d-flex">
+              <div className="d-flex mt-5">
                 <img src={EmailIcon} alt="User Icon" style={{}} />
                 <input
                   type="text"
@@ -137,12 +140,12 @@ function SuperLogin() {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              <hr style={hrStyle}></hr>x
+              <hr style={hrStyle}></hr>
                 
-                <div className="d-grid">
+                {/* <div className="d-grid">
                 <p className="mt-5" style={forgetStyle}>Forget Password?</p>
                 </div>
-             
+              */}
               {/* <button type="submit" className="btn btn-primary">
                 Login
               </button> */}
@@ -156,12 +159,12 @@ function SuperLogin() {
                 Login
               </button>
              
-              <div className=" mt-5" style={{color:"white"}}>
+              {/* <div className=" mt-5" style={{color:"white"}}>
                 Don't have an account?{" "}
                 <Link to="/signup" style={{textDecoration:"none" ,color:"white"}}>
                   Sign Up
                 </Link>
-              </div>
+              </div> */}
             </form>
           </div>
         </div>

@@ -2,12 +2,10 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Card, Form } from "react-bootstrap";
 import LoadingScreen from "../../../pages/Loader/Loader";
-import Name_Icon from "../../../assests/person_blue_icon.svg";
-import NumPadIcon from "../../../assests/pin_code_black_icon.svg";
-import EditIcon from "../../../assests/edit_modal_icon.svg";
-import DeleteIcon from "../../../assests/delete_icon.svg";
-
+import { Modal } from "react-bootstrap";
+import {  useNavigate } from "react-router-dom";
 import IntercomIcon from "../../../assests/intercom_modal_icon.png";
+import AlertModal from "../../../components/Commercial/AlertModal/AlertModal";
 
 const hrStyle = {
   // border: 'none',
@@ -16,15 +14,15 @@ const hrStyle = {
 };
 const inputFieldStyle = {
   border: "none",
-  borderRadius:"5px",
+  borderRadius: "5px",
   background: "#EEE",
   fontSize: "16px",
   width: "280px",
   marginLeft: "auto",
-  marginRight:"auto",
+  marginRight: "auto",
   outline: "none",
-  textAlign:"center",
-  height:"33px"
+  textAlign: "center",
+  height: "33px",
 };
 const btnStyle = {
   width: "230px",
@@ -36,88 +34,89 @@ const btnStyle = {
   fontWeight: "600",
 };
 
-const iconStyle = {
-  marginLeft: "20px",
-};
-
-export default function PinCodeModal({}) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const [ShowPinCodeModal, setPinCodeModal] = useState(false);
-  const [username, setUserName] = useState();
-
+export default function IntercomModal({setInterIdModal ,setCommercialData}) {
+  const [IntercomId, setIntercomId] = useState("");
+  const [showAlertModal, setshowAlertModal] = useState(false);
   const [isListed, setIsListed] = useState(false);
-  const [formData, setFormData] = useState({
-    fname: "",
-    lname: "",
-    email: "",
-    password: "",
-    phoneNo: "",
-  });
+  // const navigate =useNavigate()
+  let com_prop_id = localStorage.getItem("userKey");
 
-  const handleSubmit = (event) => {
-    setIsListed(true);
-    event.preventDefault();
-    // setEmail(formData.email)
-    // Here you would perform validation on form data before sending it to the server
+  const handleSubmit = async () => {
+    if (IntercomId === "") {
+      alert("Please Enter IntercomId");
+      return;
+    }
+    try {
+      const response = await axios.put(
+        `https://localhost:8000/commercialAdmin/AddInterComId/${com_prop_id}`,
+        { IntercomId }
+      );
+      alert(response.data.message)
+      setCommercialData(response.data.commercialData)
+      setInterIdModal(false)
 
-    axios
-      .post(`https://sailiteasy.com/api/users/register`, formData)
-      .then((response) => {
-        // Handle success
-        console.log("User registered:", response.data.message);
-        // alert.show(response.data.message,{
-        //   type: "success",
-        //   timeout: 5000,
-        // });
-        // setshowSignUpModal(false);
-        // setConfirmEmailModal(true);
-        // setIsListed(false)
-        // Perform any additional actions (redirect, state update, etc.) upon successful registration
-      })
-      .catch((error) => {
-        if (error.response) {
-          //       alert.show(error.response.data.message, {
-          //     type: "error",
-          //     timeout: 5000,
-          //   });
-          setIsListed(false);
-        } else {
-          // alert.show("Server Not Responding Try Again Later",{
-          //   type: "error",
-          //   timeout: 5000,
-          // });
-          setIsListed(false);
-        }
-      });
+    } catch (error) {
+      // Handle errors
+      if(error.response.data.pcbId)
+      {
+        alert( `PCB with id: ${error.response.data.pcbId} already exists`)
+        return
+      }
+      alert(error.response.data.error)
+      console.error("Error:", error);
+    }
   };
 
-  const handleOpenModal = () => {
-    setPinCodeModal(true);
-    console.log(ShowPinCodeModal);
+
+  const DeleteIntercomID = async () => {
+    try {
+      const response = await axios.delete(`https://localhost:8000/commercialAdmin/delete_InterComId/${com_prop_id}`);
+      console.log(response.data); // Handle the response as needed
+      setInterIdModal(false)
+      setCommercialData(response.data.commercialData)
+      // Perform any additional actions after deletion (e.g., redirect, show a success message)
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      // Handle the error (e.g., show an error message)
+    }
+  };
+
+
+  const handleAlertModal = () => {
+    if (IntercomId === "") {
+      alert("Please Enter IntercomId");
+      return;
+    }
+    setshowAlertModal(true);
+  };
+  const handleClick = (value, label) => {
+    setshowAlertModal(false);
+
+    if (label == "delete") {
+      if (value === "yes") {
+        alert("deleted");
+        DeleteIntercomID();
+        return;
+      }
+    }
+    if (value === "yes") {
+    }
   };
 
   return (
     <div className="container">
       <LoadingScreen open={isListed} />
-      {/* <div className="row align-items-center">
-        <div className="col-12">
-          <Card className=" " style={{ borderStyle: "none" }}>
-            <Card.Body className="p-0">
-              <div className="mb-" style={{ padding: "5% 8%" }}>
-              
-              </div>
-            </Card.Body>
-          </Card>
-        </div>
-      </div> */}
+
       <div className="mb-3 mt-3">
-        <div className="d-flex" >
-          <img src={IntercomIcon} style={{marginRight:"auto",marginLeft:"auto"}} alt="" />
+        <div className="d-flex">
+          <img
+            src={IntercomIcon}
+            style={{ marginRight: "auto", marginLeft: "auto" }}
+            alt=""
+          />
         </div>
         <div>
-          <Form onSubmit={handleSubmit}>
+          <Form>
             {/* 1 */}
             <div className="d-flex mt-3 pt-3 pb-3">
               <input
@@ -126,8 +125,8 @@ export default function PinCodeModal({}) {
                 placeholder="Enter Intercom ID"
                 style={inputFieldStyle}
                 autoComplete="off"
-                value={email} // Bind email state to the input value
-                onChange={(e) => setEmail(e.target.value)} // Update email state on input change
+                value={IntercomId}
+                onChange={(e) => setIntercomId(e.target.value)}
               />
             </div>
             <hr style={hrStyle}></hr>
@@ -138,15 +137,36 @@ export default function PinCodeModal({}) {
                 style={btnStyle}
                 type="button"
                 className="btn btn-primary shadow-sm mt-3 mb-3"
-                onClick={handleOpenModal}
+                onClick={handleSubmit}
               >
                 Done
               </button>
-              <div className="text-center" style={{ color: "#DC5656" }}>Delete Intercom ID</div>
+              <div
+                className="text-center"
+                style={{ color: "#DC5656", cursor: "pointer" }}
+                onClick={handleAlertModal}
+              >
+                Delete Intercom ID
+              </div>
             </div>
           </Form>
         </div>
       </div>
+
+      <Modal
+        centered
+        className="abc"
+        show={showAlertModal}
+        onHide={() => setshowAlertModal(false)}
+      >
+        <Modal.Body>
+          <AlertModal
+            message={"Are you sure you want to delete ?"}
+            label={"delete"}
+            handleClick={handleClick}
+          />
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

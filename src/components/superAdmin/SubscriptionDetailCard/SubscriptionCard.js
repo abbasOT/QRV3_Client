@@ -21,7 +21,7 @@ const innerDiv1Style ={
   color:"#fff",
   fontFamily: 'Raleway',
   fontSize: '18px',
-  fontWeight: 600,
+  fontWeight: "600",
 }
 
 const tableRowStyle = {

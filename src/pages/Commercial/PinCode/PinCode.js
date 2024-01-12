@@ -5,10 +5,11 @@ import AddResidentIocn from "../../../assests/add_resident_icon.svg";
 import Form from "react-bootstrap/Form";
 import PinCodeCard from '../../../components/Commercial/PinCodeCard/PinCodeCard'
 import PinCodeIcon from '../../../assests/pin_code.svg'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddPinCodeModal from '../../../components/Commercial/AddPinCodeModal/AddPinModal';
 import { Dropdown, Modal, Button } from "react-bootstrap";
 import PinCodeModalIcon from "../../../assests/pin_code_modal_icon.svg";
+import axios from "axios";
 
 const iconStyle = {
     position: "relative",
@@ -32,20 +33,6 @@ const btnStyle = {
   
   };
 
-  const dataArray = [
-    { name: "FedEx", id: 1 },
-    { name: "FedEx", id: 2 },
-    { name: "FedEx", id: 3 },
-    { name: "FedEx", id: 4 },
-    { name: "FedEx", id: 5 },
-    { name: "FedEx", id: 6 },
-    { name: "FedEx", id: 7 },
-    { name: "FedEx", id: 8 },
-    { name: "FedEx", id: 9 },
-    { name: "FedEx", id: 10 },
-    { name: "FedEx", id: 11 },
-    { name: "FedEx", id: 12 },
-  ];
 
 
 
@@ -53,11 +40,87 @@ function PinCode() {
 
   const [showPinCodeModal, setPinCodeModal] = useState(false);
   const [username, setUserName] = useState();
+  const [PinsData, setPins] = useState([]);
+  const [PinCodeName,setPinName] = useState()
+  const [PinCode , setPinCode] =useState("")
+  const [searchInput, setSearchInput] = useState("");
 
   const handleOpenModal = (item) => {
     setPinCodeModal(true);
     console.log(showPinCodeModal);
     setUserName(item.name);
+  };
+  const handleSearchInputChange = (e) => {
+    setSearchInput(e.target.value);
+  };
+
+  let com_prop_id = localStorage.getItem("userKey");
+  
+  useEffect(() => {
+    const fetchResidents = async () => {
+      try {
+        // Make a GET request to fetch residents with the specified comPropId
+        const response = await axios.get(
+          `https://localhost:8000/commercialAdmin/get_pins/${com_prop_id}`
+        );
+
+        // Assuming the response contains a property 'residents' with an array of resident data
+        setPins(response.data.pins);
+        console.log(response.data.pins)
+        
+      } catch (error) {
+        console.error("Error fetching residents:", error);
+        // Handle error if needed
+      }
+    };
+
+    fetchResidents();
+  }, []);
+
+  const createPincode= async () => {
+    try {
+const pin = `AB${PinCode}` 
+      const response = await axios.post(
+        `https://localhost:8000/commercialAdmin/add_pins/${com_prop_id}`,
+        {
+          PinCode:pin,
+          PinCodeName
+        }
+       
+      );
+      console.log("API Response:", response.data);
+      setPins(response.data.pins);
+      setPinCodeModal(false)
+        setPinName("")
+        setPinCode("")
+
+    } catch (error) {
+      console.error("Error sending invitation:", error.message);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      // Perform search logic here, for example, filter residents based on searchInput
+      const filteredResidents = Object.keys(PinsData).filter((residentId) =>
+      PinsData[residentId].PinCodeName
+          .toLowerCase()
+          .includes(searchInput.toLowerCase())
+      );
+
+      const filteredResidentsArray = filteredResidents.map(
+        (residentId) => PinsData[residentId]
+      );
+
+      // Update the state with the filtered residents
+      setPins(filteredResidentsArray);
+
+      console.log(
+        filteredResidentsArray,
+        "Filtered Residents:",
+        filteredResidents
+      );
+    }
   };
 
 
@@ -73,7 +136,7 @@ function PinCode() {
           >
             {" "}
             <span>
-            Total PIN Code <span style={{ fontWeight: "700" }}> 12</span>{" "}
+            Total PIN Code <span style={{ fontWeight: "700" }}>    <>{PinsData ? Object.keys(PinsData).length : 0}</></span>{" "}
             </span>
           </div>
           <div className="col-2 " style={{ textAlign: "right" }}>
@@ -103,13 +166,16 @@ function PinCode() {
               id="SearchInput"
               size="lg"
               type="text"
+              value={searchInput}
+              onChange={handleSearchInputChange}
               placeholder="Search Resident"
+              onKeyPress={handleKeyPress}
             />
           </div>
         </div>
         <hr className="mt-5" />
         <div className="row mt-5 justify-content-around">
-        <PinCodeCard icon={PinCodeIcon}  dataArray={dataArray}/>
+        <PinCodeCard icon={PinCodeIcon}  dataArray={PinsData} setPins={setPins}/>
         </div>
       </div>
 
@@ -141,9 +207,10 @@ function PinCode() {
           {username}
         </Modal.Title>
         <Modal.Body>
-          <AddPinCodeModal />
+          <AddPinCodeModal    createPincode={createPincode} PinCodeName={PinCodeName} setPinName={setPinName} PinCode={PinCode} setPinCode={setPinCode} />
         </Modal.Body>
       </Modal>
+
 
     </div>
   )

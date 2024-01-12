@@ -24,6 +24,9 @@ const bluebtnStyle = {
   color: "",
   fontWeight: "500",
   border: "none",
+  display:"flex",
+  justifyContent:"center",
+  alignItems:"center"
 };
 const bluesmallbtnStyle = {
   width: "200px",
@@ -34,6 +37,9 @@ const bluesmallbtnStyle = {
   color: "",
   fontWeight: "500",
   border: "none",
+  display:"flex",
+  justifyContent:"center",
+  alignItems:"center"
 };
 
 const iconStyle = {
@@ -49,11 +55,25 @@ const InputDivStyle = {
   backgroundColor: "#D9D9D9",
   paddingLeft: "10%",
 };
+const TotalPropStyle ={
+  fontFamily: "Raleway",
+  fontSize: "16px",
+  fontWeight: "400",
+  color:"#535353"
+}
+const TotalPropNumStyle ={
+...TotalPropStyle,
+fontWeight: "600",
+}
 
+const container ={
+  minWidth:"1200px"
+}
 
 function AddProperty() {
   const [propertyId, setPropertyId] = useState("");
   const [properties, setProperties] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
     // Function to fetch properties
@@ -70,12 +90,15 @@ function AddProperty() {
       }
     };
 
-    // Call the function to fetch properties when the component mounts
     fetchProperties();
   }, []);
 
   const handleSubmit = () => {
     // Your logic for handling form submission
+    if(propertyId ===""){
+      alert("please enter propertyId")
+      return
+    }
     console.log("Form submitted:", propertyId);
     // Call your API endpoint here using axios or fetch
     // Example:
@@ -87,6 +110,7 @@ function AddProperty() {
       })
       .catch((error) => {
         console.error("API call failed:", error.message);
+        alert( error.response.data.error)
       });
   };
 
@@ -115,12 +139,42 @@ const handleStandByProperty = async (propertyId) => {
   }
 };
 
+
+const handleSearchInputChange = (e) => {
+  setSearchInput(e.target.value);
+};
+
+
+const handleKeyPress = (e) => {
+  if (e.key === "Enter") {
+    // Perform search logic here, for example, filter residents based on searchInput
+    const filteredResidents = Object.keys(properties).filter((residentId) =>
+    properties[residentId].propertyId
+        .toLowerCase()
+        .includes(searchInput.toLowerCase())
+    );
+
+    const filteredResidentsArray = filteredResidents.map(
+      (residentId) => properties[residentId]
+    );
+
+    // Update the state with the filtered residents
+    setProperties(filteredResidentsArray);
+
+    console.log(
+      filteredResidentsArray,
+      "Filtered Residents:",
+      filteredResidents
+    );
+  }
+};
+
   console.log(properties);
 
   return (
     <div>
       <Header />
-      <div className="container">
+      <div className="container" style={container}>
         <div className="row mt-4 d-flex justify-content-between align-items-center pb-5">
           <div
             className="col-2 "
@@ -144,7 +198,10 @@ const handleStandByProperty = async (propertyId) => {
               id="SearchInput"
               size="lg"
               type="text"
-              placeholder="Search Resident"
+              placeholder="Search Property ID"
+              value={searchInput}
+              onChange={handleSearchInputChange}
+              onKeyPress={handleKeyPress}
             />
           </div>
         </div>
@@ -155,6 +212,7 @@ const handleStandByProperty = async (propertyId) => {
                 fontFamily: "Raleway",
                 fontSize: "16px",
                 fontWeight: "600",
+                color:"#566D90"
               }}
             >
               Property ID{" "}
@@ -191,7 +249,7 @@ const handleStandByProperty = async (propertyId) => {
 
         <div className="row mt-5">
           <div className="col-2 text-start">
-            <span>Total Properties:  {Object.keys(properties).length}</span>
+            <span style={TotalPropStyle}>Total Properties: <span style={TotalPropNumStyle} >{Object.keys(properties).length}</span> </span>
           </div>
         </div>
         <hr className="" />

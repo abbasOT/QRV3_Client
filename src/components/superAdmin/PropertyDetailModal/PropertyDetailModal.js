@@ -1,10 +1,12 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import LoadingScreen from "../../../pages/Loader/Loader";
 
 import GreenDot from "../../../assests/superAdmin/green_dot.svg";
 import QrIcon from "../../../assests/superAdmin/qr_icon.svg";
 import RedDot from "../../../assests/superAdmin/red_dot.svg";
+
+import QRCode from "qrcode.react";
 
 const savebtn = {
   borderRadius: "15px",
@@ -31,13 +33,7 @@ const boxText = {
   fontWeight: "700",
 };
 
-const box2Text = {
-  color: "#19A752",
-  fontFamily: "Poppins",
-  fontSize: "14px",
-  fontStyle: "normal",
-  fontWeight: "700",
-};
+
 
 const boxLabelText = {
   color: "#566D90",
@@ -47,11 +43,7 @@ const boxLabelText = {
   fontWeight: "500",
 };
 
-const downloadText = {
-  ...box2Text,
-  textDecoration: "underline",
-  color: "#2A3649",
-};
+
 
 const dateStyle = {
   color: "#727272",
@@ -59,7 +51,7 @@ const dateStyle = {
   fontSize: "12px",
   fontStyle: "normal",
   fontWeight: "400",
-  padding:"5px 20px 0px 0px"
+  padding: "5px 20px 0px 0px",
 };
 const lineContainerStyle = {
   display: "flex",
@@ -74,78 +66,71 @@ const lineStyle = {
   flexShrink: 0,
 };
 
-const ManagmentTextStyle={
+const ManagmentTextStyle = {
   color: "#727272",
   fontFamily: "Poppins",
   fontSize: "14px",
   fontStyle: "normal",
-  textAlign:"start",
+  textAlign: "start",
   fontWeight: "600",
-}
+};
 
-const ManagmentHeadingStyle={
+const ManagmentHeadingStyle = {
+  ...ManagmentTextStyle,
+  color: "#2A3649",
+  fontSize: "16px",
+};
 
- ...ManagmentTextStyle,
- color: "#2A3649",
- fontSize: "16px",
-}
+export default function PropertyDetailModal({
+  PropertyData,
+  message,
+  handleClick,
+  label,
+  updateStatus,
+  setStatus,
+  status,
+}) {
 
-export default function PropertyDetailModal({ message, handleClick, label }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const [ShowPinCodeModal, setPinCodeModal] = useState(false);
-  const [username, setUserName] = useState();
-
-  const [isListed, setIsListed] = useState(false);
-  const [formData, setFormData] = useState({
-    fname: "",
-    lname: "",
-    email: "",
-    password: "",
-    phoneNo: "",
-  });
-
-  const handleSubmit = (event, value) => {
-    if (value == "yes") {
-      alert(value);
-    }
-    setIsListed(true);
-    event.preventDefault();
-    // setEmail(formData.email)
-    // Here you would perform validation on form data before sending it to the server
-
-    axios
-      .post(`https://sailiteasy.com/api/users/register`, formData)
-      .then((response) => {
-        // Handle success
-        console.log("User registered:", response.data.message);
-        // alert.show(response.data.message,{
-        //   type: "success",
-        //   timeout: 5000,
-        // });
-        // setshowSignUpModal(false);
-        // setConfirmEmailModal(true);
-        // setIsListed(false)
-        // Perform any additional actions (redirect, state update, etc.) upon successful registration
-      })
-      .catch((error) => {
-        if (error.response) {
-          //       alert.show(error.response.data.message, {
-          //     type: "error",
-          //     timeout: 5000,
-          //   });
-          setIsListed(false);
-        } else {
-          // alert.show("Server Not Responding Try Again Later",{
-          //   type: "error",
-          //   timeout: 5000,
-          // });
-          setIsListed(false);
-        }
-      });
+  const box2Text = {
+    color: "#19A752",
+    fontFamily: "Poppins",
+    fontSize: "14px",
+    fontStyle: "normal",
+    fontWeight: "700",
+    cursor:"pointer"
+  };
+  const downloadText = {
+    ...box2Text,
+    textDecoration: "underline",
+    color: "#2A3649",
+    cursor:"pointer"
   };
 
+  const [isListed, setIsListed] = useState(false);
+  console.log(PropertyData);
+
+  const downloadQR = (id) => {
+    const canvas = document.getElementById("123456");
+    const pngUrl = canvas
+      .toDataURL("image/png")
+      .replace("image/png", "image/octet-stream");
+    let downloadLink = document.createElement("a");
+    downloadLink.href = pngUrl;
+    downloadLink.download = `qr-${id}.png`;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  };
+
+  useEffect(() => {
+    setStatus(PropertyData.pcbStatus)
+  }, []);
+
+
+  const toggleStatus = () => {
+    setStatus((prevStatus) => (prevStatus === 'online' ? 'offline' : 'online'));
+  };
+  const dotImage = PropertyData.pcbId  ? GreenDot : RedDot;
   return (
     <div
       className="container"
@@ -155,41 +140,48 @@ export default function PropertyDetailModal({ message, handleClick, label }) {
 
       <div className="row">
         <div className="col text-end" style={dateStyle}>
-          04/21/2023
+          {PropertyData.createdAt}
         </div>
       </div>
       <div className="row mt-3 d-flex align-items-center justify-content-center">
         <div className="col-5">
-          <span style={boxLabelText}>PCB ID:</span>
+          <span style={boxLabelText}>PCB ID:{""}</span>
         </div>
 
         <div className="col-4 p-1 text-center" style={boxStyle}>
+          <span>
+          <img src={dotImage} style={{ marginRight: "10px" }} alt="" />
+          </span>
           <span style={boxText}>
-            <img src={GreenDot} style={{ marginRight: "10px" }} alt="" />
-            GHBT3768
+            
+             {PropertyData.pcbId || '-'}
           </span>
         </div>
       </div>
 
-      <div className="row mt-4 d-flex align-items-center justify-content-center ">
-        <div className="col-5">
-          <span style={boxLabelText}>Max PIN Codes ::</span>
-        </div>
+      {label === "Residential" ? null : (
+        <>
+          {" "}
+          <div className="row mt-4 d-flex align-items-center justify-content-center ">
+            <div className="col-5">
+              <span style={boxLabelText}>Max PIN Codes :</span>
+            </div>
 
-        <div className="col-4 p-1 text-center" style={boxStyle}>
-          <span style={boxText}>10</span>
-        </div>
-      </div>
+            <div className="col-4 p-1 text-center" style={boxStyle}>
+              <span style={boxText}>10</span>
+            </div>
+          </div>
+          <div className="row mt-4 d-flex align-items-center justify-content-center">
+            <div className="col-5">
+              <span style={boxLabelText}>Min User License :</span>
+            </div>
 
-      <div className="row mt-4 d-flex align-items-center justify-content-center">
-        <div className="col-5">
-          <span style={boxLabelText}>Min User License::</span>
-        </div>
-
-        <div className="col-4 p-1 text-center" style={boxStyle}>
-          <span style={boxText}>20</span>
-        </div>
-      </div>
+            <div className="col-4 p-1 text-center" style={boxStyle}>
+              <span style={boxText}>20</span>
+            </div>
+          </div>
+        </>
+      )}
 
       <div className="row mt-4 d-flex align-items-center justify-content-center">
         <div className="col-5">
@@ -197,17 +189,33 @@ export default function PropertyDetailModal({ message, handleClick, label }) {
         </div>
 
         <div className="col-4 p-1 text-center" style={{}}>
-          <span style={box2Text}>Active</span>
+          <span style={box2Text} onClick={toggleStatus}>{status}</span>
         </div>
       </div>
 
       <div className="row mt-4 d-flex align-items-center justify-content-center">
         <div className="col-5">
-          <span style={downloadText}>Download QR</span>
+          <span
+            style={downloadText}
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent the click event from triggering the parent div's onClick
+              downloadQR("dataArray[propertyId].propertyId");
+            }}
+          >
+            Download QR
+          </span>
         </div>
 
         <div className="col-4 p-1 text-center" style={{}}>
-          <span style={box2Text}><img src={QrIcon} alt="" /></span>
+          <span style={box2Text}>
+            <QRCode
+              id="123456"
+              value={`https://192.168.18.147:3000/property/${PropertyData.pcbId}`}
+              size={90}
+              level={"H"}
+              // includeMargin={true}
+            />
+          </span>
         </div>
       </div>
 
@@ -222,16 +230,12 @@ export default function PropertyDetailModal({ message, handleClick, label }) {
         <hr style={lineStyle} />
       </div>
 
- 
-
       <div className="row mt- d-grid mb-5">
-
-      <div className="col-12 d-flex align-items-center justify-content-center">
+        <div className="col-12 d-flex align-items-center justify-content-center">
           <div className="col-9">
             <span style={ManagmentHeadingStyle}>Managment:</span>
           </div>
         </div>
-
 
         <div className="col-12 d-flex align-items-center justify-content-center">
           <div className="col-5">
@@ -239,7 +243,9 @@ export default function PropertyDetailModal({ message, handleClick, label }) {
           </div>
 
           <div className="col-4 p-1 " style={{}}>
-            <span style={ManagmentTextStyle}>Gabriela</span>
+            <span style={ManagmentTextStyle}>
+              {PropertyData.name || PropertyData.UserName}
+            </span>
           </div>
         </div>
 
@@ -249,7 +255,9 @@ export default function PropertyDetailModal({ message, handleClick, label }) {
           </div>
 
           <div className="col-4 p-1 " style={{}}>
-            <span style={ManagmentTextStyle}>Acosta</span>
+            <span style={ManagmentTextStyle}>
+              {PropertyData.lastName || PropertyData.LastName}
+            </span>
           </div>
         </div>
 
@@ -259,7 +267,7 @@ export default function PropertyDetailModal({ message, handleClick, label }) {
           </div>
 
           <div className="col-4 p-1 " style={{}}>
-            <span style={ManagmentTextStyle}>7001 w 35th ave</span>
+            <span style={ManagmentTextStyle}>{PropertyData.address}</span>
           </div>
         </div>
 
@@ -269,7 +277,7 @@ export default function PropertyDetailModal({ message, handleClick, label }) {
           </div>
 
           <div className="col-4 p-1 " style={{}}>
-            <span style={ManagmentTextStyle}>test@gmail.com</span>
+            <span style={ManagmentTextStyle}>{PropertyData.email}</span>
           </div>
         </div>
 
@@ -279,7 +287,9 @@ export default function PropertyDetailModal({ message, handleClick, label }) {
           </div>
 
           <div className="col-4 p-1 " style={{}}>
-            <span style={ManagmentTextStyle}>305-111-2222</span>
+            <span style={ManagmentTextStyle}>
+              {PropertyData.phoneNumber || PropertyData.number}
+            </span>
           </div>
         </div>
 
@@ -289,7 +299,7 @@ export default function PropertyDetailModal({ message, handleClick, label }) {
           </div>
 
           <div className="col-4 p-1 " style={{}}>
-            <span style={ManagmentTextStyle}>47</span>
+            <span style={ManagmentTextStyle}>{""}</span>
           </div>
         </div>
       </div>

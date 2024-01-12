@@ -8,7 +8,7 @@ import Name_Icon from "../../assests/email_id_icon.svg";
 import Phone_Icon from "../../assests/phone_icon.svg";
 import EmailIcon from "../../assests/email_icon.svg";
 import { useFormik } from "formik";
-import * as Yup from 'yup';
+import * as Yup from "yup";
 import axios from "axios";
 
 const btnStyle = {
@@ -18,13 +18,9 @@ const btnStyle = {
   border: "none",
   backgroundColor: "white",
   color: "#2A3649",
+  fontSize: "16px",
 };
-const inputIconStyle = {
-  width: "30px",
-  height: "30px",
-  marginRight: "20px",
-  verticalAlign: "middle",
-};
+
 const hrStyle = {
   // border: 'none',
   width: "100%",
@@ -41,22 +37,6 @@ const inputFieldStyle = {
   outline: "none",
 };
 
-const loginTitleStyle = {
-  fontFamily: "'Raleway', sans-serif",
-  fontWeight: "500",
-  fontSize: "35px",
-  lineHeight: "42px",
-  textAlign: "center",
-  marginBottom: "12%", // You have margin-bottom twice, I kept the first occurrence
-  color: "#FFFFFF",
-};
-const inputStyle = {
-  "::placeholder": {
-    color: "#FFFFFF",
-    fontFamily: "'Raleway', sans-serif",
-  },
-};
-
 const forgetStyle = {
   color: "#FFFFFF",
   fontSize: "16px",
@@ -66,8 +46,6 @@ const forgetStyle = {
 
 function SignUp() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   const formik = useFormik({
     initialValues: {
@@ -80,30 +58,30 @@ function SignUp() {
       confirmPassword: "",
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Required'),
-      lastName: Yup.string().required('Required'),
-      address: Yup.string().required('Required'),
+      name: Yup.string().required("Required"),
+      lastName: Yup.string().required("Required"),
+      address: Yup.string().required("Required"),
       phoneNumber: Yup.string()
-        .required('Required')
-        .matches(/^\d{11}$/, 'Must be 11 digits'),
-      email: Yup.string().email('Invalid email address').required('Required'),
-      password: Yup.string().required('Required'),
+        .required("Required")
+        .matches(/^\d{11}$/, "Must be 11 digits"),
+      email: Yup.string().email("Invalid email address").required("Required"),
+      password: Yup.string().required("Required"),
       confirmPassword: Yup.string()
-        .required('Required')
-        .oneOf([Yup.ref('password'), null], 'Passwords must match'),
+        .required("Required")
+        .oneOf([Yup.ref("password"), null], "Passwords must match"),
     }),
     onSubmit: async (values) => {
       try {
         // Make API request using Axios
         const response = await axios.post(
-          "http://localhost:8000/commercialAdmin/signup",
+          "https://localhost:8000/commercialAdmin/signup",
           values
         );
 
         // Handle the response as needed
         console.log("API Response:", response.data);
         alert("sign success");
-        // navigate("/getProperty");
+        navigate("/login");
         // Add any additional logic or state updates after a successful form submission
       } catch (error) {
         // Handle API request errors
@@ -112,6 +90,11 @@ function SignUp() {
       }
     },
   });
+
+  const IconStyles = {
+    width: "34px",
+    height: "34px",
+  };
 
   return (
     <div className="container-fluid ">
@@ -171,7 +154,10 @@ function SignUp() {
               <hr style={hrStyle}></hr>
               {/* 3 */}
               <div className="d-flex mt-3">
-                <img src={Address_Icon} alt="User Icon" style={{}} />
+                <div style={IconStyles}>
+                  <img src={Address_Icon} alt="User Icon" />
+                </div>
+
                 <input
                   type="text"
                   id="address"
@@ -188,7 +174,10 @@ function SignUp() {
               {/* 4 */}
               {/* Phone Number */}
               <div className="d-flex mt-3">
-                <img src={Phone_Icon} alt="User Icon" style={{}} />
+                <div style={IconStyles}>
+                  <img src={Phone_Icon} alt="User Icon" />
+                </div>
+
                 <input
                   type="text"
                   id="phoneNumber"
@@ -205,7 +194,10 @@ function SignUp() {
               {/* 5 */}
               {/* Email */}
               <div className="d-flex mt-3">
-                <img src={EmailIcon} alt="User Icon" style={{}} />
+                <div style={IconStyles}>
+                  <img src={EmailIcon} alt="User Icon" />
+                </div>
+
                 <input
                   type="text"
                   id="email"
@@ -222,7 +214,10 @@ function SignUp() {
               {/* 6 */}
               {/* Password */}
               <div className="d-flex mt-3">
-                <img src={Pass_Icon} alt="User Icon" style={{}} />
+              <div style={IconStyles}>
+              <img src={Pass_Icon} alt="User Icon" style={{}} />
+                </div>
+               
                 <input
                   type="password"
                   id="password"
@@ -239,7 +234,10 @@ function SignUp() {
               {/* 7 */}
               {/* Confirm Password */}
               <div className="d-flex mt-3">
-                <img src={Pass_Icon} alt="User Icon" style={{}} />
+              <div style={IconStyles}>
+              <img src={Pass_Icon} alt="User Icon" style={{}} />
+                </div>
+               
                 <input
                   type="password"
                   id="confirmPassword"
@@ -263,7 +261,7 @@ function SignUp() {
                 type="submit"
                 className="btn btn-primary mt-5"
               >
-                Create Account
+                <b>Create Account</b>
               </button>
 
               {/* Additional Info */}
@@ -273,7 +271,7 @@ function SignUp() {
                   to="/login"
                   style={{ textDecoration: "none", color: "white" }}
                 >
-                  Log in
+                  <b>Log in</b>
                 </Link>
               </div>
             </form>

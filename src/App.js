@@ -20,8 +20,11 @@ import Subscription from "./pages/superAdmin/Subscription/Subscription";
 import PCB from "./pages/superAdmin/PCB/PCB";
 import StandByProperties from "./pages/superAdmin/StandByProperties/StandByProperties";
 import StandByPcb from "./pages/superAdmin/StantByPcb/StandByPcb";
-
 import SuperLogin from "./pages/superAdmin/Login/Login";
+//After QR Scan Routes
+import StartVideoCall from "./pages/AfterQRScan/StartVideoCall";
+import SensorError from "./pages/AfterQRScan/SensorError";
+import CommercialVisitorScreen from "./pages/AfterQRScan/Commercial_Visitor_Screen";
 
 function App() {
   const hasSeenLandingPage = localStorage.getItem("hasSeenLandingPage");
@@ -29,25 +32,19 @@ function App() {
   console.log(user);
 
   return (
-    <div className="App">
+    <div className="App" >
       <Router>
         <Routes>
           <Route exact path="/login" element={<CommercialLogin />} />
           <Route exact path="/signup" element={<SignUp />} />
-
           <Route exact path="/" element={<LandingPage />} />
-       
-  <Route exact path="/get_property" element={<GetProperty />} />
+          <Route exact path="/get_property" element={<GetProperty />} />
           <Route exact path="/property_residents/:id" element={<Residents />} />
-
           <Route exact path="/pin_code" element={<PinCode />} />
           <Route exact path="/events" element={<Events />} />
           <Route exact path="/light_timer" element={<LightTimer />} />
-
           <Route exact path="/visitor_screen" element={<VisitorScreen />} />
-
           <Route exact path="/profile" element={<UserProfile />} />
-
           <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/add_property" element={<AddProperty />} />
           <Route
@@ -68,9 +65,12 @@ function App() {
             element={<StandByProperties />}
           />
           <Route exact path="/stand_by_pcb" element={<StandByPcb />} />
-
           <Route exact path="/super-login" element={<SuperLogin />} />
-        </Routes>{" "}
+          <Route exact path="/property/:pcbId" element={<CommercialVisitorScreen />} />
+          <Route exact path="/videoCall/:call_id" element={<StartVideoCall />} />
+          <Route exact path="/sensor_error" element={<SensorError />} />
+          
+        </Routes>
       </Router>
     </div>
   );

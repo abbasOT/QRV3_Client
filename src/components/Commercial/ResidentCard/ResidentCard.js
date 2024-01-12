@@ -3,6 +3,7 @@ import UserDetailModal from "../../../components/Commercial/UserDetailModal/User
 import { Dropdown, Modal, Button } from "react-bootstrap";
 import UserDetailIcon from "../../../assests/user_detail_icon.svg";
 import person_white_icon from '../../../assests/person_filled_icon.svg'
+import ReactivateModal from "../../../components/Commercial/SuspendedUserModal/SuspendedModal";
 
 const CardStyle = {
   width: "340px",
@@ -35,23 +36,31 @@ const SuspendedNameStyle = {
 
 function ResidentCard({ dataArray, icon ,setResidents}) {
   const [showUserDetailModal, setUserDetailModal] = useState(false);
+  const [showUserSuspendedModal, setUserSuspendedModal] = useState(false);
 
   const [Resident,setResident] =useState("")
 
   const handleOpenModal = (item) => {
-    setUserDetailModal(true);
-    console.log(showUserDetailModal);
-    
-    setResident(item)
+
     console.log(item)
+    setResident(item)
+
+   if(item.status === "suspended"){
+
+    setUserSuspendedModal(true)
+    return
+   }
+   
+    setUserDetailModal(true);
+   
   };
 
-console.log(Resident.name)
+
   return (
     <>
    
 
-      {Object.keys(dataArray).length > 0 ? (
+       {dataArray &&  Object.keys(dataArray).length > 0 ? (
         Object.keys(dataArray).map((residentId) => (
           <div
           style={dataArray[residentId].status === "suspended" ? SuspendedCardStyle : CardStyle}
@@ -98,6 +107,38 @@ console.log(Resident.name)
         </Modal.Title>
         <Modal.Body>
           <UserDetailModal Resident={Resident} setResidents={setResidents} />
+        </Modal.Body>
+      </Modal>
+
+      <Modal
+        size="lg"
+        centered
+        className="abc"
+        show={showUserSuspendedModal}
+        style={{ width: "", height: "" }}
+        onHide={() => setUserSuspendedModal(false)}
+      >
+        <Modal.Title
+          className="w-100 text-center pt-2"
+          style={{
+            alignItems: "center",
+            height: "62px",
+            backgroundColor: "#DC5656",
+            color: "white",
+          }}
+        >
+          <img style={{ marginRight: "30px" }} src={UserDetailIcon} alt="" />
+          <span
+            style={{
+              fontWeight: "600",
+              fontFamily: "Open Sans",
+              fontSize: "20px",
+            }}
+          ></span>
+          {Resident.name}
+        </Modal.Title>
+        <Modal.Body>
+          <ReactivateModal Resident={Resident} setResidents={setResidents} />
         </Modal.Body>
       </Modal>
     </>

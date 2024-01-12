@@ -38,11 +38,14 @@ const iconStyle = {
   marginRight: "-40px", // Adjust the spacing between the icon and the text
 };
 
+const container ={
+  minWidth:"1200px"
+}
 
 function StandByProperties() {
 
   const [properties, setProperties] = useState([]);
-
+  const [searchInput, setSearchInput] = useState("");
   useEffect(() => {
     // Function to fetch properties
     const fetchProperties = async () => {
@@ -74,11 +77,40 @@ function StandByProperties() {
     }
   };
 
+  const handleSearchInputChange = (e) => {
+    setSearchInput(e.target.value);
+  };
+  
+  
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      // Perform search logic here, for example, filter residents based on searchInput
+      const filteredResidents = Object.keys(properties).filter((residentId) =>
+      properties[residentId].propertyId
+          .toLowerCase()
+          .includes(searchInput.toLowerCase())
+      );
+  
+      const filteredResidentsArray = filteredResidents.map(
+        (residentId) => properties[residentId]
+      );
+  
+      // Update the state with the filtered residents
+      setProperties(filteredResidentsArray);
+  
+      console.log(
+        filteredResidentsArray,
+        "Filtered Residents:",
+        filteredResidents
+      );
+    }
+  };
+
 
   return (
     <div>
       <Header />
-      <div className="container">
+      <div className="container"  style={container}>
         <div className="row mt-4 d-flex justify-content-between align-items-center pb-5">
           <div
             className="col-2 "
@@ -103,7 +135,10 @@ function StandByProperties() {
               id="SearchInput"
               size="lg"
               type="text"
-              placeholder="Search Resident"
+              placeholder="Search Property"
+              value={searchInput}
+              onChange={handleSearchInputChange}
+              onKeyPress={handleKeyPress}
             />
           </div>
         </div>

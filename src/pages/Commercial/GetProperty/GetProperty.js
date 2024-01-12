@@ -2,14 +2,8 @@ import React, { useState } from "react";
 import DoorMan_Img from "../../../assests/doorman_landing_image.png";
 import { useNavigate } from "react-router-dom";
 import "../../../App.css";
-const btnStyle = {
-  width: "290px",
-  height: "45px",
-  borderRadius: "10px",
-  border: "#566D90 solid 2px",
-  backgroundColor: "white",
-  color: "#2A3649",
-};
+import axios from "axios";
+
 const inputFieldStyle = {
   border: "none",
   background: "none",
@@ -26,15 +20,39 @@ function GetProperty() {
   const navigate = useNavigate();
   const [PropertyId, setPropertyId] = useState();
 
-  const handleEnterKeyPress = (e) => {
+  let com_prop_id = localStorage.getItem("userKey");
+
+  const handleEnterKeyPress = async (e) => {
+    console.log("pressed");
     if (e.key === "Enter") {
-      console.log(PropertyId);
-      handleNavigate();
+      try {
+        // Assuming PropertyId is a state variable
+        console.log(PropertyId);
+
+        // Save PropertyId to localStorage
+        localStorage.setItem("PropertyId", PropertyId);
+
+        // Make a POST request to the server
+        const response = await axios.post(
+          `https://localhost:8000/commercialAdmin/find_property/${com_prop_id}`,
+          {
+            PropertyId,
+          }
+        );
+
+        // Handle the response or perform additional actions
+        console.log(response.data);
+        alert(response.data.message);
+        handleNavigate();
+      } catch (error) {
+        alert(error.response.data.error);
+        console.error("Error making POST request:", error);
+        // Handle the error if needed
+      }
     }
   };
 
   const handleNavigate = () => {
-
     navigate(`/property_residents/${PropertyId}`);
   };
 

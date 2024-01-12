@@ -23,60 +23,7 @@ const btn = {
 };
 
 export default function AlertModal({message,handleClick,label}) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const [ShowPinCodeModal, setPinCodeModal] = useState(false);
-  const [username, setUserName] = useState();
-
   const [isListed, setIsListed] = useState(false);
-  const [formData, setFormData] = useState({
-    fname: "",
-    lname: "",
-    email: "",
-    password: "",
-    phoneNo: "",
-  });
-
-  const handleSubmit = (event, value) => {
-    if (value == "yes") {
-      alert(value);
-    }
-    setIsListed(true);
-    event.preventDefault();
-    // setEmail(formData.email)
-    // Here you would perform validation on form data before sending it to the server
-
-    axios
-      .post(`https://sailiteasy.com/api/users/register`, formData)
-      .then((response) => {
-        // Handle success
-        console.log("User registered:", response.data.message);
-        // alert.show(response.data.message,{
-        //   type: "success",
-        //   timeout: 5000,
-        // });
-        // setshowSignUpModal(false);
-        // setConfirmEmailModal(true);
-        // setIsListed(false)
-        // Perform any additional actions (redirect, state update, etc.) upon successful registration
-      })
-      .catch((error) => {
-        if (error.response) {
-          //       alert.show(error.response.data.message, {
-          //     type: "error",
-          //     timeout: 5000,
-          //   });
-          setIsListed(false);
-        } else {
-          // alert.show("Server Not Responding Try Again Later",{
-          //   type: "error",
-          //   timeout: 5000,
-          // });
-          setIsListed(false);
-        }
-      });
-  };
 
   return (
     <div className="container">
@@ -98,14 +45,7 @@ export default function AlertModal({message,handleClick,label}) {
         </div>
       </div>
 
-      {/* <button
-                    style={btnStyle}
-                    type="button"
-                    className="btn btn-primary shadow-sm"
-                    onClick={()=> handleSubmit("yes")}
-                  >
-                    <img src={DeleteIcon} alt="" /> Yes
-                  </button> */}
+    
     </div>
   );
 }

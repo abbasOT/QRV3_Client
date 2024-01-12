@@ -3,13 +3,13 @@ import EditUserIcon from "../../../assests/edit_user_icon.svg";
 import Address_Icon from "../../../assests/address_blue_icon.svg";
 import Name_Icon from "../../../assests/person_blue_icon.svg";
 import Phone_Icon from "../../../assests/phone_blue_icon.svg";
-
-import { Dropdown, Modal, Button } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import ChangePasswordModal from "../../../components/Commercial/ChangePasswordModal/ChangePass";
 import "../../../App.css";
-import { Link, useNavigate } from "react-router-dom";
-
-import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AlertModal from "../../../components/Commercial/AlertModal/AlertModal";
+import React, { useState } from "react";
+import axios from "axios";
 
 const hrStyle = {
   // border: 'none',
@@ -19,7 +19,7 @@ const hrStyle = {
 const inputFieldStyle = {
   border: "none",
   background: "none",
-  // color: "#FFFFFF",
+  color: "#566D90",
   fontSize: "16px",
   width: "300px",
   marginLeft: "30px",
@@ -34,17 +34,112 @@ const btnStyle = {
   color: "#2A3649",
 };
 
-const headingStyle = {};
-const normalText = {};
+const headingStyle = {
+  fontSize: "20px",
+  fontWeight: "600",
+  color: "#566D90",
+  fontFamily: "Poppins",
+  textAlign: "left",
+  whiteSpace: "nowrap",
+};
+const normalText = {
+  fontSize: "15px",
+  fontWeight: "400",
+  color: "#566D90",
+  fontFamily: "Poppins",
+};
 function UserProfile() {
-  const [showChangePassModal, setChangePassModal] = useState(false);
+  const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [showChangePassModal, setChangePassModal] = useState(false);
+  const [showAlertModal, setshowAlertModal] = useState(false);
+
+  const [name, setName] = useState(localStorage.getItem("name") || "");
+  const [lastName, setLastName] = useState(localStorage.getItem("lname") || "");
+  const [address, setAddress] = useState(localStorage.getItem("address") || "");
+  const [phoneNumber, setPhoneNumber] = useState(
+    localStorage.getItem("number") || ""
+  );
 
   const handleOpenModal = () => {
     setChangePassModal(true);
     console.log(showChangePassModal);
+  };
+
+  const email = localStorage.getItem("email");
+  localStorage.getItem("name");
+  localStorage.getItem("address");
+  localStorage.getItem("lname");
+  localStorage.getItem("number");
+  localStorage.getItem("userKey");
+
+  let com_user_id = localStorage.getItem("userKey");
+  const handleUpdate = () => {
+    // Check if required fields are not null
+    if (!name || !lastName || !address || !phoneNumber) {
+      // Handle the case where any required field is null
+      console.error("Please fill out all required fields");
+      return;
+    }
+
+    // Make PUT request using Axios
+    axios
+      .put(
+        `https://localhost:8000/commercialAdmin/update_profile/${com_user_id}`,
+        {
+          name,
+          lastName,
+          address,
+          phoneNumber,
+        }
+      )
+      .then((response) => {
+        // Handle success, if needed
+        const user = response.data.user;
+        console.log(response.data.user);
+        localStorage.setItem("name", user.name);
+        localStorage.setItem("email", user.email);
+        localStorage.setItem("address", user.address);
+        localStorage.setItem("lname", user.lastName);
+        localStorage.setItem("number", user.phoneNumber);
+      })
+      .catch((error) => {
+        // Handle error, if needed
+        console.error("Error updating profile:", error);
+      });
+  };
+
+  const handleAlertModal = () => {
+    setshowAlertModal(true);
+  };
+
+  const handleClick = (value, label) => {
+    setshowAlertModal(false);
+
+    if (label == "delete") {
+      if (value === "yes") {
+        alert("deleted");
+        DeleteUser();
+        return;
+      }
+    }
+    if (value === "yes") {
+    }
+  };
+
+  const DeleteUser = async () => {
+    try {
+      const response = await axios.delete(
+        `https://localhost:8000/commercialAdmin/deleteUser/${com_user_id}`
+      );
+      console.log(response.data); // Handle the response as needed
+      localStorage.clear();
+      navigate("/login");
+      // Perform any additional actions after deletion (e.g., redirect, show a success message)
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      // Handle the error (e.g., show an error message)
+    }
   };
 
   return (
@@ -56,8 +151,8 @@ function UserProfile() {
             <div className="d-flex align-items-center">
               <img src={EditUserIcon} alt="" />
               <div className="d-grid" style={{ marginLeft: "30px" }}>
-                <span style={headingStyle}>Gabriela Acosta</span>
-                <span style={normalText}>test@gmail.com</span>
+                <span style={headingStyle}>{name + " " + lastName}</span>
+                <span style={normalText}>{email}</span>
               </div>
             </div>
           </div>
@@ -78,8 +173,8 @@ function UserProfile() {
                 placeholder="Name"
                 style={inputFieldStyle}
                 autoComplete="off"
-                value={email} // Bind email state to the input value
-                onChange={(e) => setEmail(e.target.value)} // Update email state on input change
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <hr style={hrStyle}></hr>
@@ -96,8 +191,8 @@ function UserProfile() {
                 id="input-field"
                 style={inputFieldStyle}
                 autoComplete="off"
-                value={password} // Bind email state to the input value
-                onChange={(e) => setPassword(e.target.value)}
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
               />
             </div>
             <hr style={hrStyle}></hr>
@@ -115,8 +210,8 @@ function UserProfile() {
                 id="input-field"
                 style={inputFieldStyle}
                 autoComplete="off"
-                value={password} // Bind email state to the input value
-                onChange={(e) => setPassword(e.target.value)}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
               />
             </div>
             <hr style={hrStyle}></hr>
@@ -132,8 +227,8 @@ function UserProfile() {
                 id="input-field"
                 style={inputFieldStyle}
                 autoComplete="off"
-                value={password} // Bind email state to the input value
-                onChange={(e) => setPassword(e.target.value)}
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
               />
             </div>
             <hr style={hrStyle}></hr>
@@ -141,21 +236,24 @@ function UserProfile() {
             <button
               style={btnStyle}
               type="button"
-              className="btn btn-primary mt-5"
-              // onClick={handleSubmit}
-              
+              className="btn btn-primary mt-5 shadow"
+              onClick={handleUpdate}
             >
               Done
             </button>
 
             <div
               className="mt-5"
-              style={{ color: "#566D90" }}
+              style={{ color: "#566D90", cursor: "pointer", fontWeight: "600" }}
               onClick={handleOpenModal}
             >
               Change password
             </div>
-            <div className=" mt-2" style={{ color: "#C24E42" }}>
+            <div
+              className=" mt-2"
+              style={{ color: "#C24E42", cursor: "pointer", fontWeight: "600" }}
+              onClick={handleAlertModal}
+            >
               Delete Account
             </div>
           </form>
@@ -169,7 +267,22 @@ function UserProfile() {
         onHide={() => setChangePassModal(false)}
       >
         <Modal.Body>
-          <ChangePasswordModal  />
+          <ChangePasswordModal setChangePassModal={setChangePassModal} />
+        </Modal.Body>
+      </Modal>
+
+      <Modal
+        centered
+        className="abc"
+        show={showAlertModal}
+        onHide={() => setshowAlertModal(false)}
+      >
+        <Modal.Body>
+          <AlertModal
+            message={"Are you sure you want to delete ?"}
+            label={"delete"}
+            handleClick={handleClick}
+          />
         </Modal.Body>
       </Modal>
     </div>

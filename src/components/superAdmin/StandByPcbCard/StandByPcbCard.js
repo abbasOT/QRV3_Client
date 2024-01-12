@@ -34,7 +34,7 @@ function StandByPcb({ dataArray, handleDeletePCB }) {
               }}
             >
               <span>
-                PCB ID: <span style={PcbIdStyle}>{dataArray[pcbId].pcbId}</span>
+                PCB ID: <span style={PcbIdStyle}>{dataArray[pcbId].pcbId.toUpperCase()}</span>
               </span>{" "}
               <div className="d-grid">
               <span style={{fontSize:"12px"}}>{dataArray[pcbId].isOnline ? 'Online' : 'Offline'}</span>

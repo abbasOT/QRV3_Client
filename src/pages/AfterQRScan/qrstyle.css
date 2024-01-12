@@ -1,0 +1,62 @@
+/* .visitor-main-icon{
+
+
+} */
+
+.visitor-icon{
+    display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+}
+.button-border{
+height: 50px;
+    margin: 5px;
+    border: 1px solid #D9D9D9;
+    border-radius: 10px;
+    padding: 20px;
+}
+.heading{
+        font-family: 'Raleway', sans-serif;
+            font-weight: 500;
+            font-size: 20px;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            border-radius: 5px;
+            max-width: 96px;
+            padding: 2px;
+            /* margin-bottom: 100px; */
+            /* margin-top: 6%; */
+            align-self: center;
+}
+#textfield::placeholder {
+    color: #8D8D8D;
+}
+
+
+.jF_DhwXwBFswm5nphXHX , .AmKXNJUm0SmWgO90daLW ,.IsAmTmj_XcYEzCWjWcQd {
+    background-color: #011B33 !important;
+    height: 200% !important;
+    margin-top: -20%;
+}
+
+.E1MZoacefCas4AFmrjIw {
+    background-color: #E3982A !important
+}
+
+.AmKXNJUm0SmWgO90daLW,
+.IsAmTmj_XcYEzCWjWcQd input {
+    background-color: #011B33 !important;
+}
+
+.AmKXNJUm0SmWgO90daLW,
+.IsAmTmj_XcYEzCWjWcQd label {
+    margin-top: 6%;
+    background-color: #011B33 !important;
+    color: white !important
+}
+
+.QajuHzlZleFtiTUp_E8u.zzHlKp_IVmgXBPV3Jv58 {
+    min-width: 640px;
+    min-height: 328px;
+    padding-top: 20% !important;
+}

@@ -21,7 +21,7 @@ const iconStyle = {
   marginLeft: "20px",
 };
 
-export default function FromDateModal({}) {
+export default function FromDateModal({setFromDate, handleExportPdf ,setToDate}) {
     const [showToModal, setShowToModal] = useState(false);
   const [isListed, setIsListed] = useState(false);
 
@@ -32,19 +32,24 @@ export default function FromDateModal({}) {
     
   };
 
+  const handleFromDateChange = (date) => {
+    setToDate(date);
+
+  };
+
   return (
     <div className="container">
       <LoadingScreen open={isListed} />
       <div className="d-grid justify-content-center text-center">
 
-        <CustomDatePicker/>
+      <CustomDatePicker handleDateChange={handleFromDateChange} />
 
         <div>
         <button
           style={btnStyle}
           type="button"
           className="btn btn-primary mt-2"
-          onClick={handleOpenModal}
+          onClick={handleExportPdf}
         >
         Export PDF
         </button>

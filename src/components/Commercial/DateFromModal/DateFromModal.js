@@ -21,16 +21,22 @@ const iconStyle = {
   marginLeft: "20px",
 };
 
-export default function FromDateModal({setShowFromModal , setShowToModal ,showToModal}) {
+export default function FromDateModal({setShowFromModal , setShowToModal ,showToModal,setFromDate}) {
     
   const [isListed, setIsListed] = useState(false);
 
 
   const handleOpenModal = () => {
+    
     setShowToModal(true);
     setShowFromModal(false)
     console.log(showToModal);
     
+  };
+
+  const handleFromDateChange = (date) => {
+    setFromDate(date);
+
   };
 
   return (
@@ -38,8 +44,7 @@ export default function FromDateModal({setShowFromModal , setShowToModal ,showTo
       <LoadingScreen open={isListed} />
       <div className="d-grid justify-content-center text-center">
 
-        <CustomDatePicker/>
-
+      <CustomDatePicker handleDateChange={handleFromDateChange} />
         <div>
         <button
           style={btnStyle}

@@ -60,3 +60,7 @@ height: 50px;
     min-height: 328px;
     padding-top: 20% !important;
 }
+
+.removeScrollBar::-webkit-scrollbar {
+    display: none;
+  }

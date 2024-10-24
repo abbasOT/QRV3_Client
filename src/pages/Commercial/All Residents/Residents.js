@@ -7,41 +7,27 @@ import ResidentCard from "../../../components/Commercial/ResidentCard/ResidentCa
 import PersonIcon from "../../../assests/person_icon.svg";
 import AddResidentIcon from "../../../assests/add_residen_icon.svg";
 import React, { useEffect, useState } from "react";
-import { Modal} from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import axios from "axios";
 import AddResidentModal from "../../../components/Commercial/AddResidentModal/AddResidentModal";
 import { useParams } from "react-router-dom";
-
-const btnStyle = {
-  width: "180px",
-  height: "32px",
-  borderRadius: "10px",
-  border: "none",
-  backgroundColor: "#EEE",
-  color: "#2A3649",
-  fontWeight: "700",
-  display:"flex",
-  justifyContent:"center",
-  alignItems:"center"
-};
-
-const SearchInputStyle = {
-  border: "none",
-  backgroundColor: "#EEEEEE",
-  color: "#8E8E8E",
-  paddingLeft: "50px",
-};
-
-const iconStyle = {
-  position: "relative",
-  marginRight: "-40px", // Adjust the spacing between the icon and the text
-};
+import BlockedModal from "../../../components/Commercial/BlockedAlertModal/BlockedModal";
+import './resident.css'
+import { Link, useNavigate } from "react-router-dom";
+import { getDatabase, ref, onValue, get, push } from "firebase/database";
+import { app } from "../../../firebase"
 
 function Residents() {
+  const navigate = useNavigate();
+
   const [showAddUserModal, setAddUserModal] = useState(false);
+  const [showBlockModal, setBlockModal] = useState(false);
   const [username, setUserName] = useState();
   const [searchInput, setSearchInput] = useState("");
   const [Residents, setResidents] = useState([]);
+  const [status, setStatus] = useState("");
+  const [Residents2, setResidents2] = useState([]);
+
 
   const [formData, setFormData] = useState({
     name: "",
@@ -51,8 +37,22 @@ function Residents() {
     status: "active",
   });
 
-  console.log(formData);
+
   const { id } = useParams();
+  // `https://ot-technologies.com/commercialAdmin/get_residents/${com_prop_id}`
+  useEffect(() => {
+    const database = getDatabase();
+    const userDevicesRef = ref(database, `commercial/users/${com_prop_id}/users`);
+    onValue(userDevicesRef, (snapshot) => {
+      const data = snapshot.val();
+      console.log(data)
+      if (data) {
+        console.log(data)
+        setResidents(data)
+
+      }
+    });
+  }, []);
 
   const handleOpenModal = () => {
     setAddUserModal(true);
@@ -71,7 +71,7 @@ function Residents() {
 
       // Make a POST request to the backend endpoint
       const response = await axios.post(
-        `https://localhost:8000/commercialAdmin/add_residents/${com_prop_id}`,
+        `https://ot-technologies.com/commercialAdmin/add_residents/${com_prop_id}`,
         {
           name,
           lname,
@@ -82,7 +82,7 @@ function Residents() {
 
       console.log("API Response:", response.data);
 
-      setResidents(response.data.residents);
+      // setResidents(response.data.residents);
       setAddUserModal(false);
       setFormData({
         ...formData,
@@ -93,7 +93,12 @@ function Residents() {
       });
       // Handle the response or update state as needed
     } catch (error) {
-      console.error("Error sending invitation:", error.message);
+      console.error("Error sending invitation:", error);
+      if (error.response.data.login) {
+        alert(error.response.data.message);
+        navigate("/login");
+      }
+      alert(error.response.data.error);
       // Handle errors or show an error message to the user
     }
   };
@@ -103,29 +108,45 @@ function Residents() {
       try {
         // Make a GET request to fetch residents with the specified comPropId
         const response = await axios.get(
-          `https://localhost:8000/commercialAdmin/get_residents/${com_prop_id}`
+          `https://ot-technologies.com/commercialAdmin/get_residents/${com_prop_id}`
         );
 
-        // Assuming the response contains a property 'residents' with an array of resident data
+        setStatus(response.data.status)
         setResidents(response.data.residents);
+        setResidents2(response.data.residents)
       } catch (error) {
         console.error("Error fetching residents:", error);
-        // Handle error if needed
+        if (error.response.data.login) {
+          // alert(error.response.data.message);
+          setBlockModal(true)
+          // navigate("/login");
+        }
+
       }
     };
 
     fetchResidents();
   }, [com_prop_id]);
 
+  // const handleSearchInputChange = (e) => {
+  //   setSearchInput(e.target.value);
+  // };
   const handleSearchInputChange = (e) => {
-    setSearchInput(e.target.value);
+    const inputValue = e.target.value;
+    setSearchInput(inputValue);
+
+    // If the input value is empty, reset the users state to its original value
+    if (inputValue.trim() === "") {
+      setResidents(Residents2);
+
+    }
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       // Perform search logic here, for example, filter residents based on searchInput
       const filteredResidents = Object.keys(Residents).filter((residentId) =>
-        Residents[residentId].name
+        Residents[residentId].firstName
           .toLowerCase()
           .includes(searchInput.toLowerCase())
       );
@@ -146,12 +167,23 @@ function Residents() {
   };
 
   const suspendedResidentsCount = Residents
-  ? Object.values(Residents).filter(resident => resident.status === 'suspended').length
-  : 0;
+    ? Object.values(Residents).filter(resident => resident.status === 'suspended').length
+    : 0;
 
 
-console.log(Residents)
-  // console.log(id);
+
+  useEffect(() => {
+    console.log(status)
+    if (status === "inactive") {
+      setBlockModal(true);
+      // alert("Please wait")
+    }
+
+  }, [status]);
+  const handleCloseModal = () => {
+    setBlockModal(false);
+    navigate('/login');
+  };
 
   return (
     <div>
@@ -184,11 +216,11 @@ console.log(Residents)
               style={btnStyle}
               type="button"
               onClick={() => handleOpenModal()}
-              className="btn btn-primary shadow-sm"
+              className="btn btn-primary "
             >
               <img
                 src={AddResidentIocn}
-                style={{ marginRight: "5px" }}
+                style={{ marginRight: "15px" }}
                 alt=""
               />{" "}
               Add Resident
@@ -224,7 +256,7 @@ console.log(Residents)
           </div>
         </div>
         <hr className="mt-5" />
-        <div className="row mt-5 justify-content-around">
+        <div className="row mt-5 ">
           <ResidentCard
             icon={PersonIcon}
             dataArray={Residents}
@@ -269,8 +301,56 @@ console.log(Residents)
           />
         </Modal.Body>
       </Modal>
+
+
+
+      <Modal
+        size=""
+        centered
+        className="abc"
+        show={showBlockModal}
+        dialogClassName="border-radius"
+        // style={{ borderRadius: '45px' }}
+        onHide={handleCloseModal}
+      >
+
+        <Modal.Body>
+          <BlockedModal />
+        </Modal.Body>
+      </Modal>
+
+
     </div>
   );
 }
 
 export default Residents;
+
+
+
+const btnStyle = {
+  width: "180px",
+  height: "36px",
+  borderRadius: "10px",
+  border: "none",
+  backgroundColor: "#EEE",
+  color: "#2A3649",
+  fontWeight: "700",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  boxShadow: "0px 4px 4px 2px rgba(0, 0, 0, 0.2)"
+};
+
+const SearchInputStyle = {
+  border: "none",
+  backgroundColor: "#EEEEEE",
+  color: "#8E8E8E",
+  paddingLeft: "50px",
+
+};
+
+const iconStyle = {
+  position: "relative",
+  marginRight: "-40px", // Adjust the spacing between the icon and the text
+};

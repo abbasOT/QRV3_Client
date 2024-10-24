@@ -14,6 +14,7 @@ function SensorError() {
   })
   const defaultBackgroundStyle = {
     // width: "430px",
+    height:"100vh",
     background: "#2A3649",
   };
 

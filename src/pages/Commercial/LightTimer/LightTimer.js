@@ -1,12 +1,16 @@
 import Header from "../../../components/Commercial/Header/Header";
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import dayjs from "dayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { useNavigate } from "react-router-dom";
+import { getDatabase, ref, onValue, get, push } from "firebase/database";
+import { app } from "../../../firebase";
+import { Modal } from "react-bootstrap";
+import BlockedModal from "../../../components/Commercial/BlockedAlertModal/BlockedModal";
 
 const greenbtn = {
   backgroundColor: "#19a65b",
@@ -56,32 +60,88 @@ const timeDivStyle = {
   marginRight: "10px",
 };
 function LightTimer() {
+  const navigate = useNavigate();
   const [onTime, setonTime] = React.useState(dayjs("2022-04-17T15:30"));
   const [offTime, setOffTime] = React.useState(dayjs("2022-04-17T15:30"));
+  const [showBlockModal, setBlockModal] = useState(false);
+  const [PCBData, setPCBData] = useState([])
 
-  
+  useEffect(() => {
+
+    const database = getDatabase();
+    const userDevicesRef = ref(database, `PCB`);
+    onValue(userDevicesRef, (snapshot) => {
+      const data = snapshot.val();
+      console.log(data)
+      if (typeof data === 'object') {
+        let matchedObject;
+        const searchProperty = 'propertyId'; // Property to match (e.g., 'propertyId')
+        const searchValue = localStorage.getItem("userKey");
+        if (!searchValue || searchValue === "") {
+
+          setBlockModal(true)
+
+        }
+        for (const key in data) {
+          if (data.hasOwnProperty(key) && data[key][searchProperty] === searchValue) {
+            matchedObject = data[key]; // Store the first matching object
+            break; // Exit the loop since we only need one match
+          }
+        }
+
+        if (matchedObject) {
+          const dbOnTime = matchedObject?.ontime ?? ""; // Get onTime from matchedObject (if exists)
+          const dbOffTime = matchedObject?.offtime ?? ""; // Get offTime from matchedObject (if exists)
+
+          // Parse the database time strings using dayjs
+          const parsedOnTime = dayjs(dbOnTime, 'HH:mm a'); // Parse with format "HH:mm A"
+          const parsedOffTime = dayjs(dbOffTime, 'HH:mm a'); // Parse with format "HH:mm A"
+
+          // Update state with parsed dayjs objects for TimePicker compatibility
+          setonTime(parsedOnTime);
+          setOffTime(parsedOffTime);
+
+        } else {
+          console.log("No matching PCB objects found");
+        }
+      }
+
+
+    });
+  }, []);
+
+
+
   let com_prop_id = localStorage.getItem("userKey");
 
   const handleSetTimer = () => {
-    const formattedOnTime = onTime.format('hh:mm A');
-const formattedOffTime = offTime.format('hh:mm A');
+    const formattedOnTime = onTime.format('hh:mm a');
+    const formattedOffTime = offTime.format('hh:mm a');
     // Make a POST request using Axios
-    axios.post(`${process.env.REACT_APP_URL1}/commercialAdmin/setTimer/${com_prop_id}`, {
+    axios.post(`https://ot-technologies.com/commercialAdmin/setTimer/${com_prop_id}`, {
       ontime: formattedOnTime,
       offtime: formattedOffTime,
     })
       .then(response => {
         // Handle successful response
         alert(response.data.message)
-        console.log('Timer set successfully',response);
+        console.log('Timer set successfully', response);
       })
       .catch(error => {
         // Handle error
         console.error('Error setting timer:', error.message);
+        if (error.response.data.login) {
+          alert(error.response.data.message);
+          navigate("/login");
+          return;
+        }
       });
   };
 
-  console.log(onTime)
+  const handleCloseModal = () => {
+    setBlockModal(false);
+    navigate('/login');
+  };
 
   return (
     <div>
@@ -100,7 +160,7 @@ const formattedOffTime = offTime.format('hh:mm A');
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={["TimePicker", "TimePicker"]}>
                   <TimePicker
-                  
+
                     value={onTime}
                     onChange={(newValue) => setonTime(newValue)}
                   />
@@ -120,7 +180,7 @@ const formattedOffTime = offTime.format('hh:mm A');
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={["TimePicker", "TimePicker"]}>
                   <TimePicker
-                  
+
                     value={offTime}
                     onChange={(newValue) => setOffTime(newValue)}
                   />
@@ -129,12 +189,29 @@ const formattedOffTime = offTime.format('hh:mm A');
             </div>
           </div>
           <div className="col-6 mt-5">
-            <button style={btnStyle} type="button"  onClick={handleSetTimer} className="btn btn-primary shadow">
+            <button style={btnStyle} type="button" onClick={handleSetTimer} className="btn btn-primary shadow">
               Set Timer
             </button>
           </div>
         </div>
       </div>
+
+      <Modal
+        size=""
+        centered
+        className="abc"
+        show={showBlockModal}
+        dialogClassName="border-radius"
+        // style={{ borderRadius: '45px' }}
+        onHide={handleCloseModal}
+      >
+
+        <Modal.Body>
+          <BlockedModal />
+        </Modal.Body>
+      </Modal>
+
+
     </div>
   );
 }

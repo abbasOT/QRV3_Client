@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Button, Card, Form ,Modal,} from "react-bootstrap";
+import { Button, Card, Form, Modal, } from "react-bootstrap";
 import LoadingScreen from "../../../pages/Loader/Loader";
 import EmailIcon from "../../../assests/email_blue_icon.svg";
 import UserDetailIcon from "../../../assests/user_detail_icon.svg";
@@ -17,7 +17,16 @@ const hrStyle = {
   width: "100%",
   border: "#566D90 solid 1px",
 };
+const inputTextStyle = {
+  fontFamily: "Poppins",
+  color: "#2A3649",
+  fontWeight: "500",
+  fontSize: "13px",
+  color: "#566D90"
+}
+
 const inputFieldStyle = {
+  ...inputTextStyle,
   border: "none",
   background: "none",
   fontSize: "16px",
@@ -32,25 +41,27 @@ const btnStyle = {
   border: "#2A3649 solid 1px",
   backgroundColor: "white",
   color: "#2A3649",
-  fontWeight:"600",
-  
+  fontWeight: "600",
+
 };
-const redbtnStyle ={
+const redbtnStyle = {
   width: "230px",
   height: "37px",
   borderRadius: "10px",
   border: "#2A3649 solid 1px",
   backgroundColor: "#DC5656",
   color: "",
-  fontWeight:"600",
-  border:"none"
+  fontWeight: "600",
+  border: "none"
 };
 
 const iconStyle = {
   marginLeft: "20px",
 };
 
-export default function UserDetailModal({Resident ,setResidents }) {
+
+
+export default function UserDetailModal({ Resident, setResidents }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -58,29 +69,29 @@ export default function UserDetailModal({Resident ,setResidents }) {
   const [showSuspendedAlertModal, setSuspendedAlertModal] = useState(false);
   const [showDeleteAlterModal, setDeleteAlertModal] = useState(false);
 
-  const [userId,setUserId]=useState()
+  const [userId, setUserId] = useState()
 
 
   const [username, setUserName] = useState();
 
   const [isListed, setIsListed] = useState(false);
- 
+
 
 
 
   const handleOpenModal = () => {
     setSuspendedModal(true);
     console.log(showSuspendedModal);
-    
+
   };
 
   const handleSuspendResidend = (userId) => {
-    
+
 
     setUserId(userId)
     setSuspendedAlertModal(true);
     console.log(showSuspendedAlertModal);
-    
+
   };
 
   const handleDeleteResident = (userId) => {
@@ -88,40 +99,40 @@ export default function UserDetailModal({Resident ,setResidents }) {
     setUserId(userId)
     setDeleteAlertModal(true);
     console.log(showDeleteAlterModal);
-    
+
   };
 
 
-  const handleClick =(value,label)=>{
+  const handleClick = (value, label) => {
     setDeleteAlertModal(false);
     setSuspendedAlertModal(false);
-    if(label=="delete"){
-      if(value==="yes"){
+    if (label == "delete") {
+      if (value === "yes") {
         alert("deleted")
         DeleteUser();
         return
       }
-    }else if(label=="suspend"){
-      if(value==="yes"){
+    } else if (label == "suspend") {
+      if (value === "yes") {
         alert("suspended")
         SuspendUser();
         return
       }
     }
-    if(value==="yes"){
+    if (value === "yes") {
       handleOpenModal()
-    }else{
-    
+    } else {
+
     }
-   
+
   }
 
   let com_prop_id = localStorage.getItem("userKey");
   const DeleteUser = async () => {
     try {
       // Make a DELETE request to super/deleteProperty with the propertyId
-      const response = await axios.delete(`${process.env.REACT_APP_URL1}/commercialAdmin/delete_resident/${com_prop_id}/${userId}`);
-  
+      const response = await axios.delete(`https://ot-technologies.com/commercialAdmin/delete_resident/${com_prop_id}/${userId}`);
+
       // Update the state or perform other actions after a successful delete
       setResidents(response.data.residents || []);
     } catch (error) {
@@ -133,17 +144,18 @@ export default function UserDetailModal({Resident ,setResidents }) {
     const status = "suspended"
     try {
       // Make a DELETE request to super/deleteProperty with the propertyId
-      const response = await axios.put(`${process.env.REACT_APP_URL1}/commercialAdmin/suspend_resident/${status}/${com_prop_id}/${userId}`);
-  
+      const response = await axios.put(`https://ot-technologies.com/commercialAdmin/suspend_resident/${status}/${com_prop_id}/${userId}`);
+
       // Update the state or perform other actions after a successful delete
       console.log(response.data)
+
       setResidents(response.data.residents || []);
     } catch (error) {
       console.error('Error deleting property:', error.message);
     }
   };
 
-console.log(userId)
+  console.log(userId)
   return (
     <div className="container">
       <LoadingScreen open={isListed} />
@@ -163,7 +175,7 @@ console.log(userId)
                         placeholder="First Name"
                         style={inputFieldStyle}
                         autoComplete="off"
-                        value={Resident.name} // Bind email state to the input value
+                        value={Resident.firstName} // Bind email state to the input value
                         onChange={(e) => setEmail(e.target.value)} // Update email state on input change
                       />
                     </div>
@@ -177,7 +189,7 @@ console.log(userId)
                         placeholder="Last Name"
                         style={inputFieldStyle}
                         autoComplete="off"
-                        value={Resident.lname} // Bind email state to the input value
+                        value={Resident.lastName} // Bind email state to the input value
                         onChange={(e) => setEmail(e.target.value)} // Update email state on input change
                       />
                     </div>
@@ -237,24 +249,24 @@ console.log(userId)
           </Card>
         </div>
         <div className="col-4">
-        <button
-              style={redbtnStyle}
-              type="button"
-              className="btn btn-primary shadow-sm"
-              onClick={()=> handleSuspendResidend(Resident.userId)}
-              
-            >
-         <img src={SuspendIcon} alt="" />    Suspend Resident
-            </button>
-            <button
-              style={btnStyle}
-              type="button"
-              className="btn btn-primary mt-2"
-              onClick={ ()=> handleDeleteResident(Resident.userId)}
-              
-            >
-         <img src={DeleteIcon} alt="" />   Delete Resident
-            </button>
+          <button
+            style={redbtnStyle}
+            type="button"
+            className="btn btn-primary shadow-sm"
+            onClick={() => handleSuspendResidend(Resident.userId)}
+
+          >
+            <img src={SuspendIcon} style={{ marginRight: "15px" }} alt="" />    Suspend Resident
+          </button>
+          <button
+            style={btnStyle}
+            type="button"
+            className="btn btn-primary mt-2"
+            onClick={() => handleDeleteResident(Resident.userId)}
+
+          >
+            <img src={DeleteIcon} style={{ marginRight: "15px" }} alt="" />   Delete Resident
+          </button>
         </div>
       </div>
 
@@ -287,7 +299,7 @@ console.log(userId)
           {username}
         </Modal.Title>
         <Modal.Body>
-          <SuspendedUserModal />
+          <SuspendedUserModal setSuspendedModal={setSuspendedModal} />
         </Modal.Body>
       </Modal>
 
@@ -297,12 +309,12 @@ console.log(userId)
         centered
         className="abc"
         show={showDeleteAlterModal}
-        style={{ width: "", height: "",border:" #E3982A solid 3px" }}
+        style={{ width: "", height: "", border: " #E3982A solid 3px" }}
         onHide={() => setDeleteAlertModal(false)}
       >
-       
+
         <Modal.Body >
-          <AlertModal message={"Are you sure you want to delete it?"} label={"delete"}  handleClick={handleClick} />
+          <AlertModal message={"Are you sure you want to delete it?"} label={"delete"} handleClick={handleClick} />
         </Modal.Body>
       </Modal>
 
@@ -314,7 +326,7 @@ console.log(userId)
         style={{ width: "", height: "" }}
         onHide={() => setSuspendedAlertModal(false)}
       >
-       
+
         <Modal.Body>
           <AlertModal message={"Are you sure you want to Suspended it?"} label={"suspend"} handleClick={handleClick} />
         </Modal.Body>

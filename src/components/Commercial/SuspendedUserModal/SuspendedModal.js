@@ -1,28 +1,32 @@
 import axios from "axios";
 import React, { useState } from "react";
-
-import PassIcon from "../../../assests/password_blue_icon.svg";
 import LoadingScreen from "../../../pages/Loader/Loader";
 import EmailIcon from "../../../assests/email_blue_icon.svg";
-import { Button, Card, Form ,Modal,} from "react-bootstrap";
+import { Button, Card, Form, Modal, } from "react-bootstrap";
 import Address_Icon from "../../../assests/address_blue_icon.svg";
 import Name_Icon from "../../../assests/person_blue_icon.svg";
 import Phone_Icon from "../../../assests/phone_blue_icon.svg";
-
-import EditIcon from '../../../assests/edit_blue_icon.svg'
-
-import MailIcon from '../../../assests/mail_blue_icon.svg'
-import SuspendIcon from '../../../assests/suspend_icon.svg'
+import { Link, useNavigate } from "react-router-dom";
 import ReactivationIcon from '../../../assests/reactivation_icon.svg'
 import DeleteIcon from '../../../assests/delete_icon.svg'
 import AlertModal from "../AlertModal/AlertModal";
+
 
 const hrStyle = {
   // border: 'none',
   width: "100%",
   border: "#566D90 solid 1px",
 };
+const inputTextStyle = {
+  fontFamily: "Poppins",
+  color: "#2A3649",
+  fontWeight: "500",
+  fontSize: "13px",
+  color: "#566D90"
+}
+
 const inputFieldStyle = {
+  ...inputTextStyle,
   border: "none",
   background: "none",
   fontSize: "16px",
@@ -37,45 +41,43 @@ const btnStyle = {
   border: "#2A3649 solid 1px",
   backgroundColor: "white",
   color: "#2A3649",
-  fontWeight:"600",
-  
+  fontWeight: "600",
+
 };
-const redbtnStyle ={
+const redbtnStyle = {
   width: "230px",
   height: "37px",
   borderRadius: "10px",
   border: "#2A3649 solid 1px",
   backgroundColor: "#19A752",
   color: "",
-  fontWeight:"600",
-  border:"none"
+  fontWeight: "600",
+  border: "none"
 };
 
 const iconStyle = {
   marginLeft: "20px",
 };
 
-export default function SuspendedUserModal({Resident ,setResidents }) {
+export default function SuspendedUserModal({ Resident, setResidents }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [showSuspendedAlertModal, setSuspendedAlertModal] = useState(false);
-
-  const [userId,setUserId]=useState()
+  const [userId, setUserId] = useState()
   const [showSuspendedModal, setSuspendedModal] = useState(false);
   const [isListed, setIsListed] = useState(false);
   const [showDeleteAlterModal, setDeleteAlertModal] = useState(false);
   const [showReactivateModal, setReactivateModal] = useState(false);
-
+  const navigate = useNavigate();
 
 
   const handleSuspendResidend = (userId) => {
-    
+
 
     setUserId(userId)
     setReactivateModal(true);
-    console.log(showSuspendedAlertModal);
-    
+    // console.log(showSuspendedAlertModal);
+
   };
 
   const handleDeleteResident = (userId) => {
@@ -83,51 +85,55 @@ export default function SuspendedUserModal({Resident ,setResidents }) {
     setUserId(userId)
     setDeleteAlertModal(true);
     console.log(showDeleteAlterModal);
-    
+
   };
 
-  const handleClick =(value,label)=>{
+  const handleClick = (value, label) => {
     setDeleteAlertModal(false);
     setReactivateModal(false);
-    if(label=="delete"){
-      if(value==="yes"){
+    if (label == "delete") {
+      if (value === "yes") {
         alert("deleted")
         DeleteUser();
         return
       }
-    }else if(label=="reactivate"){
-      if(value==="yes"){
-        alert("suspended")
+    } else if (label == "reactivate") {
+      if (value === "yes") {
+        alert("active again")
         Reactivate();
         return
       }
     }
-    if(value==="yes"){
+    if (value === "yes") {
       handleOpenModal()
-    }else{
-    
+    } else {
+
     }
-   
-console.log(value)
+
+    console.log(value)
   }
 
   const handleOpenModal = () => {
     setSuspendedModal(true);
     console.log(showSuspendedModal);
-    
+
   };
-  
+
   let com_prop_id = localStorage.getItem("userKey");
 
   const DeleteUser = async () => {
     try {
       // Make a DELETE request to super/deleteProperty with the propertyId
-      const response = await axios.delete(`${process.env.REACT_APP_URL1}/commercialAdmin/delete_resident/${com_prop_id}/${userId}`);
-  
+      const response = await axios.delete(`https://ot-technologies.com/commercialAdmin/delete_resident/${com_prop_id}/${userId}`);
+
       // Update the state or perform other actions after a successful delete
       setResidents(response.data.residents || []);
     } catch (error) {
       console.error('Error deleting property:', error.message);
+      if (error.response.data.login) {
+        alert(error.response.data.message);
+        navigate("/login");
+      }
     }
   };
 
@@ -135,13 +141,17 @@ console.log(value)
     const status = "active"
     try {
       // Make a DELETE request to super/deleteProperty with the propertyId
-      const response = await axios.put(`${process.env.REACT_APP_URL1}/commercialAdmin/suspend_resident/${status}/${com_prop_id}/${userId}`);
-  
+      const response = await axios.put(`https://ot-technologies.com/commercialAdmin/suspend_resident/${status}/${com_prop_id}/${userId}`);
+
       // Update the state or perform other actions after a successful delete
       console.log(response.data)
       setResidents(response.data.residents || []);
     } catch (error) {
       console.error('Error deleting property:', error.message);
+      if (error.response.data.login) {
+        alert(error.response.data.message);
+        navigate("/login");
+      }
     }
   };
 
@@ -154,7 +164,7 @@ console.log(value)
             <Card.Body className="p-0">
               <div className="mb-" style={{ padding: "5% 8%" }}>
                 <div className="mb-3">
-                <Form>
+                  <Form>
                     {/* 1 */}
                     <div className="d-flex mt-">
                       <img src={Name_Icon} alt="User Icon" style={iconStyle} />
@@ -164,7 +174,7 @@ console.log(value)
                         placeholder="First Name"
                         style={inputFieldStyle}
                         autoComplete="off"
-                        value={Resident.name} // Bind email state to the input value
+                        value={Resident.firstName} // Bind email state to the input value
                         onChange={(e) => setEmail(e.target.value)} // Update email state on input change
                       />
                     </div>
@@ -178,7 +188,7 @@ console.log(value)
                         placeholder="Last Name"
                         style={inputFieldStyle}
                         autoComplete="off"
-                        value={Resident.lname} // Bind email state to the input value
+                        value={Resident.lastName} // Bind email state to the input value
                         onChange={(e) => setEmail(e.target.value)} // Update email state on input change
                       />
                     </div>
@@ -196,7 +206,7 @@ console.log(value)
                         id="input-field"
                         style={inputFieldStyle}
                         autoComplete="off"
-                        value={Resident.email} // Bind email state to the input value
+                        value={Resident.address} // Bind email state to the input value
                         onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
@@ -211,7 +221,7 @@ console.log(value)
                         id="input-field"
                         style={inputFieldStyle}
                         autoComplete="off"
-                        value={password} // Bind email state to the input value
+                        value={Resident.number} // Bind email state to the input value
                         onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
@@ -225,7 +235,7 @@ console.log(value)
                         id="input-field"
                         style={inputFieldStyle}
                         autoComplete="off"
-                        value={password} // Bind email state to the input value
+                        value={Resident.email} // Bind email state to the input value
                         onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
@@ -237,24 +247,24 @@ console.log(value)
           </Card>
         </div>
         <div className="col-4">
-        <button
-              style={redbtnStyle}
-              type="button"
-              className="btn btn-primary shadow-sm"
-              onClick={()=> handleSuspendResidend(Resident.userId)}
-              
-            >
-         <img src={ReactivationIcon} style={{}} alt="" />   Reactive Resident
-            </button>
-            <button
-              style={btnStyle}
-              type="button"
-              className="btn btn-primary mt-2"
-              onClick={ ()=> handleDeleteResident(Resident.userId)}
-              
-            >
-         <img src={DeleteIcon} alt="" />   Delete Resident
-            </button>
+          <button
+            style={redbtnStyle}
+            type="button"
+            className="btn btn-primary shadow-sm"
+            onClick={() => handleSuspendResidend(Resident.userId)}
+
+          >
+            <img src={ReactivationIcon} style={{ marginRight: "15px" }} alt="" />   Reactive Resident
+          </button>
+          <button
+            style={btnStyle}
+            type="button"
+            className="btn btn-primary mt-2"
+            onClick={() => handleDeleteResident(Resident.userId)}
+
+          >
+            <img src={DeleteIcon} style={{ marginRight: "15px" }} alt="" />   Delete Resident
+          </button>
         </div>
       </div>
 
@@ -264,12 +274,12 @@ console.log(value)
         centered
         className="abc"
         show={showReactivateModal}
-        style={{ width: "", height: "",border:" #E3982A solid 3px" }}
+        style={{ width: "", height: "", border: " #E3982A solid 3px" }}
         onHide={() => setReactivateModal(false)}
       >
-       
+
         <Modal.Body >
-        <AlertModal message={"Are you sure you want to Reactivate it?"} label={"reactivate"} handleClick={handleClick} />
+          <AlertModal message={"Are you sure you want to Reactivate it?"} label={"reactivate"} handleClick={handleClick} />
         </Modal.Body>
       </Modal>
 
@@ -278,15 +288,15 @@ console.log(value)
         centered
         className="abc"
         show={showDeleteAlterModal}
-        style={{ width: "", height: "",border:" #E3982A solid 3px" }}
+        style={{ width: "", height: "", border: " #E3982A solid 3px" }}
         onHide={() => setDeleteAlertModal(false)}
       >
-       
+
         <Modal.Body >
-          <AlertModal message={"Are you sure you want to delete it?"} label={"delete"}  handleClick={handleClick} />
+          <AlertModal message={"Are you sure you want to delete it?"} label={"delete"} handleClick={handleClick} />
         </Modal.Body>
       </Modal>
-     
+
 
     </div>
   );

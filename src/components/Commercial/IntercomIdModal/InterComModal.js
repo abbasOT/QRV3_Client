@@ -1,10 +1,11 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Form } from "react-bootstrap";
 import LoadingScreen from "../../../pages/Loader/Loader";
 import { Modal } from "react-bootstrap";
-import {  useNavigate } from "react-router-dom";
-import IntercomIcon from "../../../assests/intercom_modal_icon.png";
+import { useNavigate } from "react-router-dom";
+// import IntercomIcon from "../../../assests/intercom_modal_icon.png";
+import IntercomIcon from "../../../assests/intercom.svg";
 import AlertModal from "../../../components/Commercial/AlertModal/AlertModal";
 
 const hrStyle = {
@@ -12,6 +13,8 @@ const hrStyle = {
   width: "100%",
   border: "#566D90 solid 1px",
 };
+
+
 const inputFieldStyle = {
   border: "none",
   borderRadius: "5px",
@@ -34,21 +37,26 @@ const btnStyle = {
   fontWeight: "600",
 };
 
-export default function IntercomModal({setInterIdModal ,setCommercialData}) {
+export default function IntercomModal({ setInterIdModal, setCommercialData, commercialData }) {
   const [IntercomId, setIntercomId] = useState("");
   const [showAlertModal, setshowAlertModal] = useState(false);
   const [isListed, setIsListed] = useState(false);
-  // const navigate =useNavigate()
+  const navigate = useNavigate();
+
   let com_prop_id = localStorage.getItem("userKey");
 
+  useEffect(() => {
+    setIntercomId(commercialData.pcbId)
+  }, [])
   const handleSubmit = async () => {
     if (IntercomId === "") {
       alert("Please Enter IntercomId");
       return;
     }
+    console.log(IntercomId)
     try {
       const response = await axios.put(
-        `https://localhost:8000/commercialAdmin/AddInterComId/${com_prop_id}`,
+        `https://ot-technologies.com/commercialAdmin/AddInterComId/${com_prop_id}`,
         { IntercomId }
       );
       alert(response.data.message)
@@ -57,12 +65,18 @@ export default function IntercomModal({setInterIdModal ,setCommercialData}) {
 
     } catch (error) {
       // Handle errors
-      if(error.response.data.pcbId)
-      {
-        alert( `PCB with id: ${error.response.data.pcbId} already exists`)
-        return
+      if (error.response.data.login) {
+
+        alert(error.response.data.message);
+        navigate("/login");
+        return;
+      } else if (error.response.data.pcbId) {
+        alert(`PCB with id: ${error.response.data.pcbId} already exists`);
+        return;
+      } else {
+        alert(error.response.data.error)
       }
-      alert(error.response.data.error)
+
       console.error("Error:", error);
     }
   };
@@ -70,13 +84,18 @@ export default function IntercomModal({setInterIdModal ,setCommercialData}) {
 
   const DeleteIntercomID = async () => {
     try {
-      const response = await axios.delete(`https://localhost:8000/commercialAdmin/delete_InterComId/${com_prop_id}`);
+      const response = await axios.delete(`https://ot-technologies.com/commercialAdmin/delete_InterComId/${com_prop_id}`);
       console.log(response.data); // Handle the response as needed
       setInterIdModal(false)
       setCommercialData(response.data.commercialData)
       // Perform any additional actions after deletion (e.g., redirect, show a success message)
     } catch (error) {
       console.error('Error deleting user:', error);
+      if (error.response.data.login) {
+        alert(error.response.data.message);
+        navigate("/login");
+        return;
+      }
       // Handle the error (e.g., show an error message)
     }
   };

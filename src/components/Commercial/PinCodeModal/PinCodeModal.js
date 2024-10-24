@@ -55,6 +55,7 @@ export default function PinCodeModal({
   UpdatePin,
   PinDetails,
   setPinDetails,
+  asciiValue
 }) {
   const [showDeleteAlterModal, setDeleteAlertModal] = useState(false);
 const [pinId,setPinId] =useState()
@@ -109,7 +110,7 @@ const [pinId,setPinId] =useState()
                     {/* 2 */}
                     <div className="d-flex mt-3">
                       <img src={NumPadIcon} alt="User Icon" style={iconStyle} />
-                      <span  style={ABStyle}>AB</span> 
+                      <span  style={ABStyle}>{asciiValue}</span> 
                       <input
                         type="text"
                         id="input-field"
@@ -117,7 +118,7 @@ const [pinId,setPinId] =useState()
                         style={inputFieldStyle}
                         autoComplete="off"
                        
-                        value={PinDetails.PinCode ? PinDetails.PinCode.substring(2) : ''}
+                        value={PinDetails.PinCode}
                         onChange={(e) =>
                           setPinDetails({
                             ...PinDetails,

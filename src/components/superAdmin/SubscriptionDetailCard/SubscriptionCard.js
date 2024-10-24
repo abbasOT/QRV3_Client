@@ -51,7 +51,11 @@ const NameStyle = {
   color: "#566D90",
 };
 
-function SubscriptionCard({ label ,value }) {
+function SubscriptionCard({ label ,Users,count }) {
+
+//  const userCount = Users.length;
+
+
   return (
     <>
       <div
@@ -61,7 +65,7 @@ function SubscriptionCard({ label ,value }) {
         //   onClick={() => handleOpenModal(item)}
       >
         <div className="d-flex align-items-center justify-content-center" style={innerDiv1Style}>{label}</div>
-        <div className="d-flex align-items-center justify-content-center" style={innerDiv2Style}>{value}</div>
+        <div className="d-flex align-items-center justify-content-center" style={innerDiv2Style}>{Users ? Object.keys(Users).length : label === "Non subscriber"? count : 0}</div>
       </div>
     </>
   );

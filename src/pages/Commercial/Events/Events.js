@@ -10,6 +10,9 @@ import axios from "axios";
 import DateFromModal from "../../../components/Commercial/DateFromModal/DateFromModal";
 import DateToModal from "../../../components/Commercial/DateToModal/DateToModal";
 import jsPDF from "jspdf";
+import { useNavigate } from "react-router-dom";
+import { getDatabase, ref, onValue, get, push } from "firebase/database";
+import { app } from "../../../firebase"
 
 const iconStyle = {
   position: "relative",
@@ -18,7 +21,7 @@ const iconStyle = {
 
 const btnStyle = {
   width: "180px",
-  height: "32px",
+  height: "36px",
   borderRadius: "10px",
   border: "none",
   backgroundColor: "#EEE",
@@ -39,7 +42,8 @@ function Events() {
   const [fromDate, setFromDate] = useState();
   const [toDate, setToDate] = useState();
   const [events, setEvents] = useState([]);
-
+  const [events2, setEvents2] = useState([]);
+  const navigate = useNavigate();
   const handleOpenModal = () => {
     // if(!events ){
     //   alert("moye moye")
@@ -49,19 +53,40 @@ function Events() {
     console.log(ShowFromModal);
   };
 
-  let comId = localStorage.getItem("userKey");
+  let com_prop_id = localStorage.getItem("userKey");
+
+  useEffect(() => {
+    const database = getDatabase();
+    const userDevicesRef = ref(database, `commercial/events/${com_prop_id}`);
+    onValue(userDevicesRef, (snapshot) => {
+      const data = snapshot.val();
+
+      if (data) {
+
+        setEvents(data)
+      }
+    });
+  }, []);
+
+
   useEffect(() => {
     // Function to fetch properties
     const fetchProperties = async () => {
       try {
         // Make a GET request to get properties
         const response = await axios.get(
-          `https://localhost:8000/commercialAdmin/getEvents/${comId}`
+          `https://ot-technologies.com/commercialAdmin/getEvents/${com_prop_id}`
         );
 
         setEvents(response.data.EventData || []);
+        setEvents2(response.data.EventData || [])
       } catch (error) {
         console.log("Error fetching properties:");
+        if (error.response.data.login) {
+          alert(error.response.data.message);
+          navigate("/login");
+          return;
+        }
         // alert(error.response.data.error);
       }
     };
@@ -71,10 +96,11 @@ function Events() {
   }, []);
 
   const handleKeyPress = (e) => {
+    console.log(events)
     if (e.key === "Enter") {
-      // Perform search logic here, for example, filter residents based on searchInput
+
       const filteredResidents = Object.keys(events).filter((residentId) =>
-        events[residentId].name
+        events[residentId].message
           .toLowerCase()
           .includes(searchInput.toLowerCase())
       );
@@ -94,11 +120,22 @@ function Events() {
     }
   };
 
+  // const handleSearchInputChange = (e) => {
+  //   setSearchInput(e.target.value);
+  // };
+
   const handleSearchInputChange = (e) => {
-    setSearchInput(e.target.value);
+    const inputValue = e.target.value;
+    setSearchInput(inputValue);
+
+    // If the input value is empty, reset the users state to its original value
+    if (inputValue.trim() === "") {
+      setEvents(events2);
+
+    }
   };
 
-  console.log(fromDate);
+
 
   const handleExportPdf = async () => {
     if (!fromDate) {
@@ -112,7 +149,7 @@ function Events() {
 
     try {
       const response = await axios.post(
-        `https://localhost:8000/commercialAdmin/exportPdf/${comId}`,
+        `https://ot-technologies.com/commercialAdmin/exportPdf/${com_prop_id}`,
         {
           fromDate: fromDate,
           toDate: toDate,
@@ -139,6 +176,11 @@ function Events() {
     } catch (error) {
       // Handle errors
       console.error("Error:", error);
+      if (error.response.data.login) {
+        alert(error.response.data.message);
+        navigate("/login");
+        return;
+      }
     }
   };
 
@@ -146,7 +188,7 @@ function Events() {
     <div>
       <Header />
 
-      <div className="container" style={{minWidth:"1300px"}}  >
+      <div className="container" style={{ minWidth: "1300px" }}  >
         <div className="row mt-4 d-flex justify-content-end">
           <div className="col-2 " style={{ textAlign: "right" }}>
             {" "}
@@ -170,7 +212,7 @@ function Events() {
             {" "}
             <img src={searchIcon} style={iconStyle} alt="" />{" "}
             <Form.Control
-            className="shadow-sm"
+              className="shadow-sm"
               style={SearchInputStyle}
               id="SearchInput"
               size="lg"

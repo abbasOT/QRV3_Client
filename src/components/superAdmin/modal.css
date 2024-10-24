@@ -1,0 +1,14 @@
+.abc {
+    /* border: 2px solid #2A3649 !important;  */
+    /* border-radius: "1.2rem" !important; */
+  }
+ .modal {
+   --bs-modal-color: none !important;
+   /* Reset to inherit or set to a specific color */
+   --bs-modal-bg: none !important;
+   /* Reset to default or set to a specific background color */
+ }
+
+ .modal-content {
+  border: none !important;
+ }

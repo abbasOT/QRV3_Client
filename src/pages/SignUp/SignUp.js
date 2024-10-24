@@ -20,6 +20,12 @@ const btnStyle = {
   color: "#2A3649",
   fontSize: "16px",
 };
+const inputTextStyle = {
+  fontFamily: "Raleway",
+  color: "#FFFFFF",
+  fontWeight: "400",
+  fontSize: "13px",
+}
 
 const hrStyle = {
   // border: 'none',
@@ -28,9 +34,13 @@ const hrStyle = {
 };
 
 const inputFieldStyle = {
+  ...inputTextStyle,
   border: "none",
   background: "none",
   color: "#FFFFFF",
+  '::placeholder': {
+    color: 'white' // Placeholder color
+  },
   fontSize: "16px",
   width: "300px",
   marginLeft: "30px",
@@ -74,18 +84,20 @@ function SignUp() {
       try {
         // Make API request using Axios
         const response = await axios.post(
-          "https://localhost:8000/commercialAdmin/signup",
+          "https://ot-technologies.com/commercialAdmin/signup",
           values
         );
 
         // Handle the response as needed
         console.log("API Response:", response.data);
-        alert("sign success");
+        alert("Sign Up Successfull");
         navigate("/login");
         // Add any additional logic or state updates after a successful form submission
       } catch (error) {
         // Handle API request errors
         console.error("API Error:", error.message);
+        alert("Sorry, This Email is already registered.");
+
         // You can update state or show an error message to the user
       }
     },
@@ -101,8 +113,10 @@ function SignUp() {
       <div className="row   ">
         <div className="col-6 ">
           <div className="d-grid align-items-center justify-content-center h-100">
-            <img src={DoorMan_Img} alt="" />
-
+            <div>
+              <img src={DoorMan_Img} alt="" />
+              <p className="mt-3" style={textStyle}>Elevating your Entry Experience</p>
+            </div>
             {/* <p className="text-center" style={{ color: "#2A3649" }}>
            name: "",
       lastName: "",
@@ -116,10 +130,10 @@ function SignUp() {
           style={{ backgroundColor: "#2A3649", height: "100vh" }}
         >
           <div
-            className=" align-items-center justify-content-center h-100"
-            style={{ padding: "20%" }}
+            className="d-flex align-items-center justify-content-center h-100"
+          // style={{ padding: "20%" }}
           >
-            <form onSubmit={formik.handleSubmit}>
+            <form onSubmit={formik.handleSubmit} style={{ width: "70%" }}>
               {/* 1 */}
               <div className="d-flex">
                 <img src={Name_Icon} alt="User Icon" style={{}} />
@@ -127,14 +141,17 @@ function SignUp() {
                   type="text"
                   id="name"
                   placeholder="Name"
+                  className="white-placeholder"
                   style={inputFieldStyle}
                   autoComplete="off"
+                  maxLength={50}
                   {...formik.getFieldProps("name")}
                 />
+                {formik.touched.name && formik.errors.name ? (
+                  <div style={requiredStyle}>{formik.errors.name}</div>
+                ) : null}
               </div>
-              {formik.touched.name && formik.errors.name ? (
-                <div style={{ color: "red" }}>{formik.errors.name}</div>
-              ) : null}
+
               <hr style={hrStyle}></hr>
               {/* 2 */}
               <div className="d-flex mt-3 ">
@@ -142,15 +159,18 @@ function SignUp() {
                 <input
                   type="text"
                   placeholder="Last Name"
+                  className="white-placeholder"
                   id="lastName"
                   style={inputFieldStyle}
                   autoComplete="off"
+                  maxLength={50}
                   {...formik.getFieldProps("lastName")}
                 />
+                {formik.touched.lastName && formik.errors.lastName ? (
+                  <div style={requiredStyle}>{formik.errors.lastName}</div>
+                ) : null}
               </div>
-              {formik.touched.lastName && formik.errors.lastName ? (
-                <div style={{ color: "red" }}>{formik.errors.lastName}</div>
-              ) : null}
+
               <hr style={hrStyle}></hr>
               {/* 3 */}
               <div className="d-flex mt-3">
@@ -163,13 +183,16 @@ function SignUp() {
                   id="address"
                   placeholder="Address"
                   style={inputFieldStyle}
+                  className="white-placeholder"
                   autoComplete="off"
+                  maxLength={50}
                   {...formik.getFieldProps("address")}
                 />
+                {formik.touched.address && formik.errors.address ? (
+                  <div style={requiredStyle}>{formik.errors.address}</div>
+                ) : null}
               </div>
-              {formik.touched.address && formik.errors.address ? (
-                <div style={{ color: "red" }}>{formik.errors.address}</div>
-              ) : null}
+
               <hr style={hrStyle}></hr>
               {/* 4 */}
               {/* Phone Number */}
@@ -184,12 +207,15 @@ function SignUp() {
                   placeholder="Phone number"
                   style={inputFieldStyle}
                   autoComplete="off"
+                  maxLength={11}
+                  className="white-placeholder"
                   {...formik.getFieldProps("phoneNumber")}
                 />
+                {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
+                  <div style={requiredStyle}>{formik.errors.phoneNumber}</div>
+                ) : null}
               </div>
-              {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
-                <div style={{ color: "red" }}>{formik.errors.phoneNumber}</div>
-              ) : null}
+
               <hr style={hrStyle}></hr>
               {/* 5 */}
               {/* Email */}
@@ -203,56 +229,65 @@ function SignUp() {
                   id="email"
                   placeholder="Email"
                   style={inputFieldStyle}
+                  className="white-placeholder"
                   autoComplete="off"
+                  maxLength={50}
                   {...formik.getFieldProps("email")}
                 />
+                {formik.touched.email && formik.errors.email ? (
+                  <div style={requiredStyle}>{formik.errors.email}</div>
+                ) : null}
               </div>
-              {formik.touched.email && formik.errors.email ? (
-                <div style={{ color: "red" }}>{formik.errors.email}</div>
-              ) : null}
+
               <hr style={hrStyle}></hr>
               {/* 6 */}
               {/* Password */}
               <div className="d-flex mt-3">
-              <div style={IconStyles}>
-              <img src={Pass_Icon} alt="User Icon" style={{}} />
+                <div style={IconStyles}>
+                  <img src={Pass_Icon} alt="User Icon" style={{}} />
                 </div>
-               
+
                 <input
                   type="password"
                   id="password"
                   placeholder="Password"
                   style={inputFieldStyle}
+                  className="white-placeholder"
                   autoComplete="off"
+                  maxLength={50}
                   {...formik.getFieldProps("password")}
                 />
+                {formik.touched.password && formik.errors.password ? (
+                  <div style={requiredStyle}>{formik.errors.password}</div>
+                ) : null}
               </div>
-              {formik.touched.password && formik.errors.password ? (
-                <div style={{ color: "red" }}>{formik.errors.password}</div>
-              ) : null}
+
               <hr style={hrStyle}></hr>
               {/* 7 */}
               {/* Confirm Password */}
               <div className="d-flex mt-3">
-              <div style={IconStyles}>
-              <img src={Pass_Icon} alt="User Icon" style={{}} />
+                <div style={IconStyles}>
+                  <img src={Pass_Icon} alt="User Icon" style={{}} />
                 </div>
-               
+
                 <input
                   type="password"
                   id="confirmPassword"
                   placeholder="Confirm Password"
                   style={inputFieldStyle}
+                  className="white-placeholder"
                   autoComplete="off"
+                  maxLength={50}
                   {...formik.getFieldProps("confirmPassword")}
                 />
+                {formik.touched.confirmPassword &&
+                  formik.errors.confirmPassword ? (
+                  <div style={requiredStyle}>
+                    {formik.errors.confirmPassword}
+                  </div>
+                ) : null}
               </div>
-              {formik.touched.confirmPassword &&
-              formik.errors.confirmPassword ? (
-                <div style={{ color: "red" }}>
-                  {formik.errors.confirmPassword}
-                </div>
-              ) : null}
+
               <hr style={hrStyle}></hr>
 
               {/* Submit Button */}
@@ -283,7 +318,7 @@ function SignUp() {
 }
 
 export default SignUp;
-
+const requiredStyle = { display: "flex", alignItems: "center", textAlign: "start", color: "red" }
 {
   /* <div className="col-12">
 <img src={DoorMan_Img} alt="" />
@@ -298,4 +333,10 @@ export default SignUp;
   Get Started
 </button>
 </div> */
+}
+const textStyle = {
+  fontFamily: "Poppins",
+  color: "#2A3649",
+  fontWeight: "700",
+  fontSize: "16px",
 }

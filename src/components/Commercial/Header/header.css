@@ -1,0 +1,8 @@
+.nav-link:hover .nav-img {
+    filter: invert(82%) sepia(70%) saturate(5262%) hue-rotate(334deg) brightness(89%) contrast(99%);
+  }
+  
+  .nav-link:hover span {
+    color: #E3982A;
+  }
+

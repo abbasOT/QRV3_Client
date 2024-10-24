@@ -1,15 +1,15 @@
 import React from "react";
-import { useParams ,useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import axios from "axios";
 import { useRef, useEffect, useState } from "react";
-// import doorman from '../../Images/doorman.svg'
+import doorman from "../../assests/logo.svg";
 import "./qrstyle.css";
 function StartCall() {
   const { call_id } = useParams();
-  
+  const { token } = useParams();
   const meetingRef = useRef(null);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (call_id) {
@@ -18,15 +18,33 @@ function StartCall() {
       // Handle the case where  is empty
       console.log("call_id is empty");
     }
-  }, [call_id]);
+  }, []);
+
+  const onDeleteRoom = async () => {
+    try {
+      // Make the DELETE request
+      const response = await axios.delete(
+        `https://ot-technologies.com/commercialAdmin/deleteToken/${token}`
+      );
+      console.log(response);
+      console.log("Left the room");
+      console.log(call_id);
+      // navigate(`/property/${call_id}`);
+      window.location.href = `/property/${call_id}`;
+    } catch (error) {
+      console.error("Error leaving the room:", error);
+      // Handle the error if needed
+    }
+  };
 
   const myMeeting = async (element) => {
-    const appID = 217138010;
-    const serverSecret = "493f68df7cc30d71c2e23036abd5b695";
+    const appID = 2019657299;
+    const serverSecret = "e5cc924db34f7cd147a6133247099e7b";
     const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
       appID,
       serverSecret,
-      "111",
+      token,
+      // "111",
       Date.now().toString(),
       "visitor"
     );
@@ -35,20 +53,22 @@ function StartCall() {
 
     zp.joinRoom({
       container: element,
+      maxUsers: 2,
+      showPreJoinView: false,
+      showLeavingView: false,
+      showLeaveRoomConfirmDialog: false,
+      // autoHideFooter:false,
+
       scenario: {
         mode: ZegoUIKitPrebuilt.OneONoneCall,
       },
-      showPreJoinView:false,
-      onJoinRoom: () => {
-        // Add your custom logic for joining the room
-      },
-      onLeaveRoom: () => {
-        // Custom logic when leaving the room
-        console.log("Left the room");
 
-        // Use navigate to redirect to the specified URL
-        navigate(`/property/${call_id}`);
-        // navigate(`/property/ab4`);
+      onJoinRoom: () => { },
+      onLeaveRoom: () => {
+        onDeleteRoom();
+      },
+      onUserLeave: (users) => {
+        console.log("Leave the room");
       },
     });
   };
@@ -57,9 +77,14 @@ function StartCall() {
   return (
     <center style={{ marginBottom: "5%" }}>
       <div
-        style={{ maxWidth:"576px", backgroundColor: "#011B33", height: "100vh", paddingTop:"30%" }}
+        style={{
+          maxWidth: "576px",
+          backgroundColor: "#011B33",
+          height: "100vh",
+          paddingTop: "30%",
+        }}
       >
-       <div ref={meetingRef} />
+        <div ref={meetingRef} />
       </div>
     </center>
   );

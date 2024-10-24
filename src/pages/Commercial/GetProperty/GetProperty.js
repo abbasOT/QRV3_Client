@@ -1,20 +1,35 @@
 import React, { useState } from "react";
 import DoorMan_Img from "../../../assests/doorman_landing_image.png";
+import { Box, Button } from "@mui/material";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useNavigate } from "react-router-dom";
 import "../../../App.css";
 import axios from "axios";
 
+const inputStyle = {
+  fontFamily: "Poppins",
+  color: "#2A3649",
+  fontWeight: 400,
+  fontSize: "14px",
+}
 const inputFieldStyle = {
+  ...inputStyle,
   border: "none",
   background: "none",
   color: "#FFFFFF",
-  fontSize: "16px",
   width: "300px",
-  marginLeft: "30px",
   color: "black",
   outline: "none",
   textAlign: "center",
 };
+
+const textStyle = {
+  fontFamily: 'var(--font-family-secondary)',
+  color: 'var(--primary-color)',
+  fontStyle: "italic",
+  paddingTop: "2.5rem",
+}
+
 
 function GetProperty() {
   const navigate = useNavigate();
@@ -22,38 +37,45 @@ function GetProperty() {
 
   let com_prop_id = localStorage.getItem("userKey");
 
-  const handleEnterKeyPress = async (e) => {
-    console.log("pressed");
+
+
+  const handleEnterKeyPress = (e) => {
     if (e.key === "Enter") {
-      try {
-        // Assuming PropertyId is a state variable
-        console.log(PropertyId);
-
-        // Save PropertyId to localStorage
-        localStorage.setItem("PropertyId", PropertyId);
-
-        // Make a POST request to the server
-        const response = await axios.post(
-          `https://localhost:8000/commercialAdmin/find_property/${com_prop_id}`,
-          {
-            PropertyId,
-          }
-        );
-
-        // Handle the response or perform additional actions
-        console.log(response.data);
-        alert(response.data.message);
-        handleNavigate();
-      } catch (error) {
-        alert(error.response.data.error);
-        console.error("Error making POST request:", error);
-        // Handle the error if needed
-      }
+      handleSubmit();
     }
   };
 
+
+
+  const handleSubmit = async () => {
+    try {
+      // Save PropertyId to localStorage
+      localStorage.setItem("PropertyId", PropertyId);
+
+
+      // Make a POST request to the server
+      const response = await axios.post(
+        `https://ot-technologies.com/commercialAdmin/find_property/${com_prop_id}`,
+        {
+          PropertyId,
+        }
+      );
+
+      // Handle the response or perform additional actions
+      console.log(response.data);
+      alert(response.data.message);
+      handleNavigate();
+    } catch (error) {
+      alert(error.response.data.error);
+      console.error("Error making POST request:", error);
+      // Handle the error if needed
+    }
+  };
   const handleNavigate = () => {
-    navigate(`/property_residents/${PropertyId}`);
+    // navigate(`/property_residents/${PropertyId}`);
+
+    localStorage.setItem("commercialPropId", PropertyId);
+    navigate(`/commercial-admin`);
   };
 
   return (
@@ -62,9 +84,9 @@ function GetProperty() {
         <div className="col-12">
           <img src={DoorMan_Img} alt="" />
         </div>
-        <div className="col-12 mt-3 mb-5">
+        <div className="col-12 mt-2 mb-5">
           <div className="text-center">
-            Effortless Security Access at Your <br /> Fingertips
+            <p style={textStyle}>elevating your entry experience...</p>
           </div>
         </div>
         <div className="col-12 mt-5">
@@ -79,6 +101,19 @@ function GetProperty() {
             onKeyPress={handleEnterKeyPress}
           />
         </div>
+        <div className="col-12 mt-3">
+          <Button sx={{
+            minWidth: 170, borderRadius: "2.2rem", padding: "0.2rem 1rem", '&:hover': {
+              background: "#F08F00",
+              '& .MuiSvgIcon-root': {
+                color: '#FFF', // Change the icon color to white on hover
+              },
+            }
+          }} onClick={handleSubmit}>
+            <ArrowForwardIcon sx={{ width: 24, height: 26, color: 'var(--primary-color)' }} />
+          </Button>
+        </div>
+
       </div>
     </div>
   );

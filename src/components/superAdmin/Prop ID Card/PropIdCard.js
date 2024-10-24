@@ -3,24 +3,30 @@ import React, { useState } from "react";
 import ResidentialDetailModal from "../PropertyDetailModal/PropertyDetailModal";
 import PropertyDetailModal from "../PropertyDetailModal/PropertyDetailModal";
 import { Modal } from "react-bootstrap";
+import '../modal.css'
+import NewResidentialDetailModal from "../PropertyDetailModal/NewResidendialDetailModal";
+import { Typography, Grid } from "@mui/material";
 
 const CardStyle = {
   width: "398px",
   height: "48px",
   borderRadius: "5px",
-  border: "#2A3649 solid 1px",
-  backgroundColor: "#2A3649",
+  background: "#2A3649",
   cursor: "pointer",
+  marginLeft: "20px",
+  marginRight: "20px",
+};
+const noIdCardStyle = {
+  ...CardStyle,
+  background: "#446B54", // Red background for cards without an ID
 };
 
-function PropIdCard({ label,setStatus, dataArray, handleDeleteProperty ,updateStatus,status}) {
+function PropIdCard({ label, dataArray, handleDeleteProperty, setCommercialProperties }) {
   const [showPropertyModal, setPropertyModal] = useState(false);
-  const [PropertyData, setPropertyData] = useState();
+  const [PropertyData, setPropertyData] = useState({});
 
   const handleOpenModal = (propertyData) => {
     setPropertyData(propertyData);
-
-    console.log(showPropertyModal);
 
     if (label === "Residential") {
       setPropertyModal(true);
@@ -32,67 +38,68 @@ function PropIdCard({ label,setStatus, dataArray, handleDeleteProperty ,updateSt
   function renderFirstHalf(id) {
     // Calculate the index to split the string in half
     const splitIndex = Math.ceil(id.length / 2);
-  
+
     // Get the first half of the string
     const firstHalf = id.substring(0, splitIndex);
-  
+
     // Return the JSX
     return <span>{firstHalf}</span>;
   }
 
+
+
   return (
     <>
       {Object.keys(dataArray).length > 0 ? (
-        Object.keys(dataArray).map((propertyId) => (
-          <div
-            style={CardStyle}
-            key={dataArray[propertyId].propertyId}
-            className="col-md-4 mb-4 align-items-center justify-content-center p-0"
-            onClick={() => handleOpenModal(dataArray[propertyId])}
-          >
-            <div
-              className=" d-flex align-items-center justify-content-between"
-              style={{
-                height: "48px",
-                padding: "0px 10px",
-                color: "white",
-              }}
-            >
-              <span >
-              <span style={{fontSize:"18px",fontFamily:"Poppins",fontWeight:"600",}}>Property ID:</span>   <span>{renderFirstHalf(dataArray[propertyId].id)}</span>
-              </span>{" "}
-              <span></span>{" "}
-              <span>
-                <img
-                  src={deleteIcon}
-                  width="21px"
-                  height="25px"
-                  alt=""
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent the click event from triggering the parent div's onClick
-                    handleDeleteProperty(dataArray[propertyId].propertyId);
-                  }}
-                />
-              </span>
-            </div>
-          </div>
-        ))
+        <Grid container spacing={1} className="mt-5 d-flex justify-content-start align-items-center" width={"95%"}>
+          {Object.keys(dataArray).map((propertyId) => {
+            const property = dataArray[propertyId];
+            const cardStyle = property && property.propertyId ? CardStyle : noIdCardStyle;
+            return (
+              <Grid item md={4} xs={12} key={propertyId} >
+                <div
+                  style={cardStyle}
+                  key={propertyId}
+                  className="col-md-4 mb-4 align-items-center justify-content-center p-0"
+                  onClick={() => handleOpenModal(property)}
+                >
+                  <div
+                    className="d-flex align-items-center"
+                    style={{
+                      height: "48px",
+                      gap: "4rem",
+                      padding: "0px 4rem 0rem 2rem",
+                      color: "white",
+                    }}
+                  >
+                    <Typography style={{ fontSize: "18px", fontFamily: "Poppins", fontWeight: 300 }}>Property ID:</Typography>
+                    <Typography sx={{ fontSize: "18px", fontFamily: "Poppins", fontWeight: 700 }}>
+                      {property && property.propertyId ? property.propertyId : "Without ID"}
+                    </Typography>
+                  </div>
+                </div>
+              </Grid>
+            );
+          })}
+        </Grid>
+
       ) : (
         <p>No properties available.</p>
       )}
 
-     
+
 
       <Modal
         size=""
         centered
-        className="abc"
+        // className="abc"
         show={showPropertyModal}
-        style={{ width: "", height: "" }}
+        style={{ height: "", border: "none" }}
         onHide={() => setPropertyModal(false)}
       >
-        <Modal.Body style={{ backgroundColor: "#EEE", padding: "0px" }}>
-          <PropertyDetailModal label={label} PropertyData={PropertyData} updateStatus={updateStatus}  setStatus={setStatus}/>
+        <Modal.Body style={{ backgroundColor: "#EEE", borderRadius: "1.2rem", padding: "1rem", overflow: "hidden", minWidth: "85%", width: "100%" }}>
+          <NewResidentialDetailModal setPropertyModal={setPropertyModal} label={label} PropertyData={PropertyData} setPropertyData={setPropertyData} setCommercialProperties={setCommercialProperties} property={"commercial"} />
+          {/* <PropertyDetailModal label={label} PropertyData={PropertyData} setPropertyData={setPropertyData} setCommercialProperties={setCommercialProperties} property={"commercial"}  />*/}
         </Modal.Body>
       </Modal>
 
@@ -101,3 +108,5 @@ function PropIdCard({ label,setStatus, dataArray, handleDeleteProperty ,updateSt
 }
 
 export default PropIdCard;
+
+

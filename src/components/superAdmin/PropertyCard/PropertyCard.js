@@ -1,17 +1,22 @@
 import React, { useState } from "react";
 import offIcon from "../../../assests/superAdmin/off_icon.svg";
 import deleteIcon from "../../../assests/superAdmin/delete_icon.svg";
+import { Box, Grid } from "@mui/material";
 import QrIcon from "../../../assests/superAdmin/qr_icon.svg";
 import QRCode from "qrcode.react";
 
 import { Button, Card, Form, Modal } from "react-bootstrap";
 import PropertyDetailModal from "../../../components/superAdmin/PropertyDetailModal/PropertyDetailModal";
+import DeleteDialogue from "../DeleteDialogue/DeleteDialogue";
+import { Typography } from "@mui/material";
 const CardStyle = {
   width: "398px",
-  height: "244px",
   borderRadius: "13px",
   border: "#2A3649 solid 5px",
   backgroundColor: "#EEE",
+  marginLeft: "20px",
+  marginRight: "20px",
+  cursor: "pointer",
   //   cursor: "pointer",
 };
 
@@ -38,35 +43,36 @@ const standByStyle = {
 };
 
 const dateStyle = {
-  color: "#727272",
+  color: "#FFF",
   fontFamily: "Poppins",
-  fontSize: "12px",
+  fontSize: "10px",
   fontStyle: "normal",
-  fontWeight: "400",
-  padding:"5px 5px 0px 0px",
-  marginLeft:"auto"
+  fontWeight: 400,
+  padding: "5px 5px 0px 0px",
+  marginLeft: "auto",
 };
 
-const TotalPropStyle ={
+const TotalPropStyle = {
   fontFamily: "Raleway",
-  fontSize: "18px",
-  fontWeight: "600",
-  color:"#fff"
-}
-const TotalPropNumStyle ={
-...TotalPropStyle,
-  fontWeight: "400",
-marginLeft:"5px"
-}
+  display: "flex",
+  alignItems: "center",
+  fontSize: "1rem",
+  fontWeight: 600,
+  color: "#fff",
+};
+const TotalPropNumStyle = {
+  ...TotalPropStyle,
+  fontWeight: 400,
+  marginLeft: "10px",
+};
 
 function PropertyCard({
   dataArray,
   handleDeleteProperty,
   handleStandByProperty,
+  isDisabled
 }) {
   const [showPropertyModal, setPropertyModal] = useState(false);
-
-  
 
   const downloadQR = (id) => {
     const canvas = document.getElementById("123456");
@@ -82,121 +88,91 @@ function PropertyCard({
   };
   console.log(dataArray);
 
+  const [showDeleteDialogue, setShowDeleteDialogue] = useState(false);
+  const [propertyToDelete, setPropertyToDelete] = useState("");
+
+
+  const handleDelete = () => {
+    handleDeleteProperty(propertyToDelete)
+    setShowDeleteDialogue(false);
+  };
+
+  const handleDeleteDialogueOpen = (propertyId) => {
+    setShowDeleteDialogue(true);
+    setPropertyToDelete(propertyId)
+  };
+  const handleDeleteDialogueClose = () => {
+    setShowDeleteDialogue(false);
+  };
+
   return (
     <>
       {Object.keys(dataArray).length > 0 ? (
-        Object.keys(dataArray).map((propertyId) => (
-          <div
-            style={CardStyle}
-            key={dataArray[propertyId].propertyId}
-            className="col-md-4 mb-4 align-items-start justify-content-center p-0"
-            
-          >
-            <div
-              className=" d-flex align-items-center justify-content-between"
-              style={{
-                backgroundColor: "#2A3649",
-                width: "100%",
-                height: "48px",
-                color: "white",
-                padding: "0px 10px",
-              }}
-            >
-              <span style={TotalPropStyle}>
-                Property ID: <span style={TotalPropNumStyle}>{dataArray[propertyId].propertyId}</span>
-              </span>{" "}
-              <span></span>{" "}
-              <span>
-                {dataArray[propertyId].status === "standby" ? null : (
-                  <img
-                    style={{ marginRight: "20px" }}
-                    src={offIcon}
-                    alt=""
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent the click event from triggering the parent div's onClick
-                      handleStandByProperty(dataArray[propertyId].propertyId);
-                    }}
-                  />
-                )}
-                <img
-                  src={deleteIcon}
-                  alt=""
-                  style={{ cursor: "pointer" }}
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent the click event from triggering the parent div's onClick
-                    handleDeleteProperty(dataArray[propertyId].propertyId);
-                  }}
-                />
-              </span>
-            </div>
-            
-            {dataArray[propertyId].status === "standby" ? (
-                 <div className="d-flex">
-                 <div style={dateStyle}>{dataArray[propertyId].createdAt}</div>
-               </div>
-   
-                ) : null}
-           
-            <div
-              className="align-items-center d-grid"
-              style={{ height: "165px" }}
-            >
-              <div
-                className=" d-flex align-items-center justify-content-around"
-                style={{ backgroundColor: "#EEE" }}
-              >
-                <div
-                  style={{
-                    width: "100px",
-                    textAlign: "left",
-                    color: "#566D90",
-                    fontFamily: "Poppins",
-                  }}
-                >
-                  status:
-                </div>
-                <div
-                  style={
-                    dataArray[propertyId].status === "inactive"
-                      ? inActiveStyle
-                      : standByStyle
-                  }
-                >
-                  {dataArray[propertyId].status}
-                </div>
-              </div>
+        <Grid container spacing={1} className="mt-5 d-flex justify-content-start align-items-center" width={"90%"}>
+          {Object.keys(dataArray).map((propertyId) => (
+            <Grid item md={4} xs={12} margin={0}>
 
               <div
-                className=" d-flex align-items-center justify-content-around"
-                style={{ backgroundColor: "#EEE" }}
+                style={CardStyle}
+                // key={dataArray[propertyId]?.propertyId}
+                className="col-md-4 mb-4  p-0"
               >
                 <div
-                  style={downloadText}
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent the click event from triggering the parent div's onClick
-                    downloadQR(dataArray[propertyId].propertyId);
+                  className="d-flex align-items-center justify-content-between"
+                  style={{
+                    backgroundColor: "#2A3649",
+                    width: "100%",
+                    height: "35px",
+                    color: "white",
+                    padding: "0px 10px",
                   }}
                 >
-                  Download QR
+                  <Typography sx={{ ...TotalPropStyle, fontFamily: "Poppins" }}>
+                    Property ID:{" "}
+                    <Typography sx={{ ...TotalPropNumStyle, fontFamily: "Poppins" }}>
+                      {dataArray[propertyId].propertyId}
+                    </Typography>
+                  </Typography>
+
+                  {" "}
+                  <span></span>{" "}
+                  <Box sx={{ display: "flex", gap: "0.3rem", alignItems: "center" }}>
+                    <img
+                      style={{ marginRight: "20px" }}
+                      src={offIcon}
+                      alt=""
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent the click event from triggering the parent div's onClick
+                        if (!isDisabled) {
+                          handleStandByProperty(dataArray[propertyId].propertyId);
+                        }
+                      }}
+                    />
+                    <img
+                      src={deleteIcon}
+                      alt=""
+                      style={{ cursor: "pointer" }}
+
+                      onClick={(e) => handleDeleteDialogueOpen(dataArray[propertyId].propertyId)}
+                    />
+                  </Box>
                 </div>
-                <div>
-                  <QRCode
-                    id="123456"
-                    value={`http://localhost:3000/property/${dataArray[propertyId].propertyId}`}
-                    size={90}
-                    level={"H"}
-                    // includeMargin={true}
-                  />
-                  {/* <img src={QrIcon} alt="" /> */}
-                </div>
+
               </div>
-            </div>
-          </div>
-        ))
+            </Grid>
+          ))}
+        </Grid>
       ) : (
         <p>No properties available.</p>
       )}
 
+      {showDeleteDialogue && (
+        <DeleteDialogue
+          handleDeleteOpen={handleDeleteDialogueOpen}
+          handleDelete={handleDelete}
+          handleDeleteClose={handleDeleteDialogueClose}
+        />
+      )}
       <Modal
         size=""
         centered
@@ -215,12 +191,3 @@ function PropertyCard({
 
 export default PropertyCard;
 
-{
-  /* {Object.keys(dataArray).map((propertyId) => (
-          <li key={propertyId}>
-            <strong>Property ID:</strong> {dataArray[propertyId].propertyId}
-            <br />
-            <strong>Status:</strong> {dataArray[propertyId].status}
-          </li>
-        ))} */
-}

@@ -10,7 +10,8 @@ import UsersCard from "../../components/Commercial/UsersCard/UsersCard";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import InputAdornment from "@mui/material/InputAdornment";
-
+import back from "../../assests/backIcon.svg";
+import './qrstyle.css'
 const userOuterDiv = {
   border: "none",
   backgroundColor: "#D3D3D3",
@@ -23,12 +24,12 @@ const userOuterDiv = {
   height: "275px",
 };
 
-function SearchResults({ AdminData, CommercialResidents,setPage,page }) {
+
+function SearchResults({ AdminData, CommercialResidents, setPage, page, value, handleKeyPress, handleSearchInputChange }) {
   const { pcbId } = useParams();
   const [pin, setPin] = useState("");
-
-  //   const [AdminData, setAdminData] = useState();
   const [propId, setPropId] = useState("");
+
   const navigate = useNavigate();
   const handleCall = async (userId) => {
     if (propId === "" || userId === "") {
@@ -37,7 +38,7 @@ function SearchResults({ AdminData, CommercialResidents,setPage,page }) {
     }
     try {
       const response = await axios.post(
-        `https://192.168.18.147:8000/commercialAdmin/sendCallNotification/${userId}`,
+        `https://ot-technologies.com/commercialAdmin/sendCallNotification/${userId}`,
         { propId }
       );
 
@@ -53,52 +54,56 @@ function SearchResults({ AdminData, CommercialResidents,setPage,page }) {
 
   const defaultBackgroundStyle = {
     width: "100%",
+    height: "100vh",
     // borderRadius: "40px",
   };
 
   const dynamicBackgroundStyle = AdminData?.wallpaper
     ? {
-        ...defaultBackgroundStyle,
-        backgroundImage: `url(${AdminData.wallpaper})`,
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-      }
+      ...defaultBackgroundStyle,
+      backgroundImage: `url(${AdminData.wallpaper})`,
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+    }
     : defaultBackgroundStyle;
 
   const OpacityValue = {
     ...dynamicBackgroundStyle,
   };
 
- const  handlePageChange =() =>{
-    console.log(page)
-    setPage("main")
- }
+  const handlePageChange = () => {
+    console.log(page);
+    setPage("main");
+  };
 
   return (
     <>
       <div style={OpacityValue}>
         <div
-          className="d-grid justify-content-center pt-5"
+          className=" justify-content-center pt-5"
           style={{
-            backgroundColor: `rgba(42, 54, 73, ${
-              1 - AdminData.brightness / 100
-            })`,
-            height: "600px",
+            backgroundColor: `rgba(42, 54, 73, ${1 - AdminData.brightness / 100
+              })`,
+            height: "93vh",
+            paddingLeft: "20px",
+            paddingRight: "20px",
           }}
         >
-          <ChevronLeftIcon style={{ color: "#fff" }} onClick={handlePageChange}/>
-          <div className="mt-2" style={{ color: "white" }}>
-            <h5> Welcome to</h5>{" "}
-            <h1>
-              {AdminData.WelcomMessage ? AdminData.WelcomMessage : "Blue Lake"}
-            </h1>
+          <div
+            style={{ marginTop: "10px", marginBottom: "20px" }}
+            onClick={handlePageChange}
+          >
+            <img src={back} alt="" />
           </div>
 
-          <div style={userOuterDiv}>
+          <div style={userOuterDiv} className="removeScrollBar">
             <div className="p-3">
               <TextField
                 id="input-with-icon-textfield"
                 placeholder="Search Resident"
+                value={value}
+                onChange={handleSearchInputChange}
+                onKeyPress={handleKeyPress}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -112,6 +117,7 @@ function SearchResults({ AdminData, CommercialResidents,setPage,page }) {
             </div>
 
             <UsersCard
+              title={"search"}
               usersData={CommercialResidents}
               handleCall={handleCall}
             />

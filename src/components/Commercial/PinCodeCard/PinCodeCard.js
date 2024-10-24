@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import PinCodeModal from "../../../components/Commercial/PinCodeModal/PinCodeModal";
-import { Dropdown, Modal, Button } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import PinCodeIcon from "../../../assests/pin_code_modal_icon.svg";
 
 const CardStyle = {
@@ -11,6 +11,8 @@ const CardStyle = {
   border: "none",
   backgroundColor: "#EEE",
   cursor: "pointer",
+  marginLeft: "45px",
+  marginRight: "45px",
 };
 
 const NameStyle = {
@@ -19,82 +21,90 @@ const NameStyle = {
   color: "#566D90",
 };
 
-function PinCodeCard({ dataArray, icon ,setPins}) {
+function PinCodeCard({ dataArray, icon, setPins }) {
   const [showPinCodeModal, setPinCodeModal] = useState(false);
-  const [username, setUserName] = useState();
+  const [asciiValue, setAsciiValue] = useState("");
   const [PinDetails, setPinDetails] = useState({
-    PinCode: '',
-    PinCodeName: '',
+    PinCode: "",
+    PinCodeName: "",
   });
 
   const handleOpenModal = (item) => {
     setPinCodeModal(true);
-    console.log(showPinCodeModal);
-    setPinDetails(item);
+
+    // Remove the first two characters from PinCode
+    const modifiedPinCode = item.PinCode.substring(2);
+
+    // Set the modified PinCode and other details
+    setAsciiValue(item.PinCode.substring(0, 2));
+    setPinDetails({ ...item, PinCode: modifiedPinCode });
   };
 
-
-
   let com_prop_id = localStorage.getItem("userKey");
-  
+
   const DeletePin = async (pinId) => {
     try {
       // Make a DELETE request to super/deleteProperty with the propertyId
-      const response = await axios.delete(`${process.env.REACT_APP_URL1}/commercialAdmin/delete_pins/${com_prop_id}/${pinId}`);
-  
+      const response = await axios.delete(
+        `https://ot-technologies.com/commercialAdmin/delete_pins/${com_prop_id}/${pinId}`
+      );
+
       // Update the state or perform other actions after a successful delete
       setPins(response.data.remainingPins || []);
-      setPinCodeModal(false)
+      setPinCodeModal(false);
     } catch (error) {
-      console.error('Error deleting property:', error.message);
+      console.error("Error deleting property:", error.message);
     }
   };
 
   const UpdatePin = async (pinId) => {
-  
+    const modifiedPinCode = `${asciiValue}${PinDetails.PinCode}`;
+    console.log(modifiedPinCode);
+
     try {
       // Make a DELETE request to super/deleteProperty with the propertyId
-      const response = await axios.put(`${process.env.REACT_APP_URL1}/commercialAdmin/update_pins/${com_prop_id}/${pinId}`,{
-        PinDetails
-      });
-  
+      const response = await axios.put(
+        `https://ot-technologies.com/commercialAdmin/update_pins/${com_prop_id}/${pinId}`,
+        {
+          PinDetails,
+          modifiedPinCode,
+        }
+      );
+
       // Update the state or perform other actions after a successful delete
-      console.log(response.data)
+      console.log(response.data);
       setPins(response.data.updatedPins || []);
-      setPinCodeModal(false)
+      setPinCodeModal(false);
     } catch (error) {
-      console.error('Error deleting property:', error.message);
+      console.error("Error deleting property:", error.message);
     }
   };
 
-
-
   return (
     <>
-        {dataArray &&  Object.keys(dataArray).length > 0 ? (
+      {dataArray && Object.keys(dataArray).length > 0 ? (
         Object.keys(dataArray).map((PinId) => (
-        <div
-          style={CardStyle}
-          key={dataArray[PinId].id}
-          className="col-md-4 mb-4 d-flex align-items-center justify-content-center"
-          onClick={() => handleOpenModal(dataArray[PinId])}
-        >
-          <img src={icon} style={{ marginRight: "20px" }} alt="" />
-          <span style={NameStyle} className="card-title">
-            {dataArray[PinId].PinCodeName}
-          </span>
-        </div>
-     ))
-     ) : (
-       <p>No residents available</p>
-     )}
+          <div
+            style={CardStyle}
+            key={dataArray[PinId].id}
+            className="col-md-4 mb-4 d-flex align-items-center justify-content-center"
+            onClick={() => handleOpenModal(dataArray[PinId])}
+          >
+            <img src={icon} style={{ marginRight: "20px" }} alt="" />
+            <span style={NameStyle} className="card-title">
+              {dataArray[PinId].PinCodeName}
+            </span>
+          </div>
+        ))
+      ) : (
+        <p>No residents available</p>
+      )}
 
       <Modal
-        
         centered
         className="abc"
         show={showPinCodeModal}
-        style={{ width: "", height: "",marginLeft:"",marginRight:"auto" }}
+        style={{ width: "", height: "", marginLeft: "", marginRight: "auto" }}
         onHide={() => setPinCodeModal(false)}
       >
         <Modal.Title
@@ -117,7 +127,13 @@ function PinCodeCard({ dataArray, icon ,setPins}) {
           {PinDetails.PinCodeName}
         </Modal.Title>
         <Modal.Body>
-          <PinCodeModal DeletePin={DeletePin} UpdatePin={UpdatePin} PinDetails={PinDetails} setPinDetails={setPinDetails} />
+          <PinCodeModal
+            DeletePin={DeletePin}
+            UpdatePin={UpdatePin}
+            PinDetails={PinDetails}
+            asciiValue={asciiValue}
+            setPinDetails={setPinDetails}
+          />
         </Modal.Body>
       </Modal>
     </>

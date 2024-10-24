@@ -57,3 +57,78 @@
 #SearchInput::placeholder {
   color: #8E8E8E /* Replace with your desired color code or name */
 }
+
+.navbar-item:hover {
+  color: #E3982A;
+  font-size: 20px;
+}
+
+.white-placeholder::placeholder {
+  color: white; /* Placeholder color */
+}
+
+
+
+
+
+
+
+
+
+/* For WebKit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 8px;
+  /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #FFF;
+  /* Color of the track */
+  border-radius: 10px;
+  /* Rounded corners for the track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #EEEEEE;
+  /* Color of the thumb */
+  border-radius: 10px;
+  /* Rounded corners for the thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #EEEEEE;
+  /* Color of the thumb when hovered */
+}
+
+/* For Firefox */
+.scroll-container {
+  scrollbar-width: thin;
+  /* Thin scrollbar */
+  scrollbar-color: #FFF;
+  /* Thumb and track color */
+}
+
+/* Styling for scroll bar in Edge, and other browsers that support this syntax */
+.scroll-container::-ms-scrollbar {
+  width: 8px;
+  /* Width of the scrollbar */
+}
+
+.scroll-container::-ms-scrollbar-track {
+  background: #f1f1f1;
+  /* Color of the track */
+  border-radius: 10px;
+  /* Rounded corners for the track */
+}
+
+.scroll-container::-ms-scrollbar-thumb {
+  background: #888;
+  /* Color of the thumb */
+  border-radius: 10px;
+  /* Rounded corners for the thumb */
+}
+
+.scroll-container::-ms-scrollbar-thumb:hover {
+  background: #555;
+  /* Color of the thumb when hovered */
+}

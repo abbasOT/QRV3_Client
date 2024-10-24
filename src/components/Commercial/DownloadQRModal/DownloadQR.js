@@ -44,7 +44,7 @@ export default function DownloadQRModal({ pcbId, setQRModal }) {
       <div className="d-flex mt-3 justify-content-center">
         <QRCode
           id="123456"
-          value={`https://192.168.18.147:3000/property/${pcbId}`}
+          value={`https://ot-technologies.com/property/${pcbId}`}
           size={100}
           level={"H"}
           includeMargin={true}

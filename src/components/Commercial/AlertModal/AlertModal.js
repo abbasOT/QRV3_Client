@@ -41,7 +41,7 @@ export default function AlertModal({message,handleClick,label}) {
           <button style={btn} onClick={()=> handleClick("yes",label)}>Yes </button>
         </div>
         <div className="col-2">
-          <button style={greenbtn} onClick={()=> handleClick("no",label)}>ON </button>
+          <button style={greenbtn} onClick={()=> handleClick("no",label)}>NO </button>
         </div>
       </div>
 

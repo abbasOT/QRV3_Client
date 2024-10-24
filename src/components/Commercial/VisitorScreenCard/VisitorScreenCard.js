@@ -4,40 +4,12 @@ import SearchIcon from "@mui/icons-material/Search";
 import OKIcon from "../../../assests/ok.png";
 import NumPadSmallIcon from "../../../assests/numpad_smal_icon.svg";
 import { TextField, IconButton } from "@mui/material";
+import "./screen.css";
+import InputAdornment from "@mui/material/InputAdornment";
+// import callIcon from "../../../assests/visitor_com__users_screen_icon.png";
+import callIcon from "../../../assests/call_icon.png";
 
-import kIcon from "../../../assests/k_icon.svg";
-
-import UsersCard from "../../../components/Commercial/UsersCard/UsersCard";
-
-const usersData = [
-  { name: "Jane", lastName: "Doe", userId: "jane456" },
-  { name: "Alice", lastName: "Smith", userId: "alice789" },
-  { name: "Bob", lastName: "Johnson", userId: "bob101" },
-  { name: "Eva", lastName: "Davis", userId: "eva202" },
-  { name: "Charlie", lastName: "Brown", userId: "charlie303" },
-  { name: "Grace", lastName: "Lee", userId: "grace404" },
-];
-
-const SearchInputStyle = {
-  border: "none",
-  backgroundColor: "#EEEEEE",
-  color: "#8E8E8E",
-  paddingLeft: "15px",
-  borderRadius: "25px",
-  width: "377px",
-  height: "38px",
-};
-
-const userOuterDiv = {
-  border: "#FFF solid 1px",
-  margin: "5px",
-  padding: "5px",
-  borderRadius: "15px",
-  width: "377px",
-  height: "310px",
-  maxHeight: "424px",
-  overflowY: "auto",
-};
+import OrIcon from "../../../assests/or.svg";
 
 const InputDivStyle = {
   borderRadius: "20px 0 0 20px",
@@ -64,11 +36,11 @@ function VisitorScreenCard({
 
   const dynamicBackgroundStyle = CommercialData.wallpaper
     ? {
-        ...defaultBackgroundStyle,
-        backgroundImage: `url(${CommercialData.wallpaper})`,
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-      }
+      ...defaultBackgroundStyle,
+      backgroundImage: `url(${CommercialData.wallpaper})`,
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+    }
     : defaultBackgroundStyle;
 
   const OpacityValue = {
@@ -95,40 +67,16 @@ function VisitorScreenCard({
               : "QR DoorMan"}
           </h1>
         </div>
-        <div>
-          <TextField
-            sx={{
-              backgroundColor: "#ECECEC",
-              width: "377px",
-              // height:"38px",
-              borderRadius: 25,
-              margin: "10px",
-            }}
-            id="textfield"
-            placeholder="Search Name"
-            // value={searchQuery}
-            // onChange={handleSearch}
-            InputProps={{
-              startAdornment: (
-                <IconButton>
-                  <SearchIcon />
-                </IconButton>
-              ),
-              // inputProps: {
-              //   style: { color: "white" },
-              // },
-            }}
-          />
-        </div>
+        {/*  */}
 
-        <div>
-          {ResidentsData === null ? (
-            <></>
-          ) : (
-            <>
-              <UsersCard usersData={ResidentsData} />
-            </>
-          )}
+        <div
+          className=""
+        // onClick={handleShowUsers}
+        >
+          <img src={callIcon} alt="" width={"400px"} />
+        </div>
+        <div className="">
+          <img src={OrIcon} alt="" />
         </div>
 
         <div

@@ -5,13 +5,15 @@ import UserDetailIcon from "../../../assests/user_detail_icon.svg";
 import person_white_icon from '../../../assests/person_filled_icon.svg'
 import ReactivateModal from "../../../components/Commercial/SuspendedUserModal/SuspendedModal";
 
-const CardStyle = {
+let CardStyle = {
   width: "340px",
   height: "50px",
   borderRadius: "10px",
   border: "none",
   backgroundColor: "#EEE",
   cursor: "pointer",
+  marginLeft:"45px",
+  marginRight:"45px"
 };
 
 const SuspendedCardStyle = {
@@ -55,6 +57,15 @@ function ResidentCard({ dataArray, icon ,setResidents}) {
    
   };
 
+  // function MouseOver(event) {
+  //   event.target.style.background = '#2A3649';
+  //   event.target.style.color = 'white';
+  
+  // }
+  // function MouseOut(event){
+  //   event.target.style.background="#EEE";
+  //   event.target.style.color = '#2A3649';
+  // }
 
   return (
     <>
@@ -63,6 +74,7 @@ function ResidentCard({ dataArray, icon ,setResidents}) {
        {dataArray &&  Object.keys(dataArray).length > 0 ? (
         Object.keys(dataArray).map((residentId) => (
           <div
+          // onMouseOver={MouseOver} onMouseOut={MouseOut}
           style={dataArray[residentId].status === "suspended" ? SuspendedCardStyle : CardStyle}
           key={residentId}
           className="col-md-4 mb-4 d-flex align-items-center justify-content-center"
@@ -70,7 +82,7 @@ function ResidentCard({ dataArray, icon ,setResidents}) {
         >
           <img src={dataArray[residentId].status === "suspended" ? person_white_icon : icon } style={{ marginRight: "20px" }} alt="" />
           <span style={dataArray[residentId].status === "suspended" ? SuspendedNameStyle : NameStyle} className="card-title">
-          {dataArray[residentId].name}
+          {  dataArray[residentId].firstName} {dataArray[residentId].lastName}
           </span>
         </div>
         ))
